@@ -3,5 +3,6 @@
 .env
 core/project/settings/local.py
 static/*
+migrations/
 !static/.gitkeep
 *.sqlite*
