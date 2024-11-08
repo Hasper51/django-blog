@@ -21,7 +21,7 @@ class Post(TimeBaseModel):
     class Meta:
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
-        ordering = ['-created_at']
+        ordering = ['created_at']
 
     def __str__(self):
         return f"Post by {self.author} at {self.created_at}"
@@ -31,7 +31,7 @@ class Post(TimeBaseModel):
             id=self.id,
             image=self.image.url,
             caption=self.caption,
-            author=self.author.id,
+            author=self.author.username,
             created_at=self.created_at,
             updated_at=self.updated_at,
             
