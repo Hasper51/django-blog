@@ -1,13 +1,16 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+
+
 # Create your models here.
 class User(AbstractUser):
-    """
-    Custom user model extending Django's AbstractUser.
-    Adds additional fields for user profile functionality.
-    
+    """Custom user model extending Django's AbstractUser. Adds additional
+    fields for user profile functionality.
+
     Inherits default fields: username, email, password, first_name, last_name, is_active, etc.
+
     """
+
     bio = models.TextField(blank=True)
     profile_image = models.ImageField(upload_to="user_images/", blank=True)
 
@@ -27,12 +30,19 @@ class User(AbstractUser):
 
 
 class Follow(models.Model):
+    """Represents the following relationship between users.
+
+    A user can follow multiple users and can be followed by multiple
+    users.
+
     """
-    Represents the following relationship between users.
-    A user can follow multiple users and can be followed by multiple users.
-    """
-    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')
-    followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed')
+
+    follower = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='follower',
+    )
+    followed = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='followed',
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

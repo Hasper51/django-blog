@@ -6,6 +6,7 @@ class PaginationOut(Schema):
     limit: int
     total: int
 
+
 class PaginationIn(Schema):
     offset: int = 0
     limit: int = 10

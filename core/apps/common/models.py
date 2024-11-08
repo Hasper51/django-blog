@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 class TimeBaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -7,6 +8,3 @@ class TimeBaseModel(models.Model):
 
     class Meta:
         abstract = True
-    
-
-
