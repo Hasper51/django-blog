@@ -11,7 +11,7 @@ entities это бизнес сущности, здесь только те по
 
 @dataclass
 class Post:
-    id: int
+    id: int # noqa
     image: str
     caption: str
     author: str

@@ -23,7 +23,7 @@ router = Router(tags=['Posts'])
 
 
 @router.get('', response=ApiResponce[ListPaginatedResponce[PostSchema]])
-def get_post_list(
+def get_post_list_handler(
     request: HttpRequest,
     filters: Query[PostFilters],
     pagination_in: Query[PaginationIn],

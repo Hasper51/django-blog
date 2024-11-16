@@ -13,7 +13,7 @@ from core.apps.posts.entities.posts import Post as PostEntity
 
 
 class PostSchema(BaseModel):
-    id: int  #noqa
+    id: int  # noqa
     image: str
     caption: str
     author: str

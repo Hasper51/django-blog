@@ -12,6 +12,7 @@ django = "^5.0"
 psycopg2 = "^2.9.9"
 django-environ = "^0.11.2"
 django-ninja = "^1.3.0"
+punq = "^0.7.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -21,6 +22,7 @@ faker = "^30.8.2"
 pytest = "^8.3.3"
 pytest-django = "^4.9.0"
 factory-boy = "^3.3.1"
+autoflake = "^2.3.1"
 
 [build-system]
 requires = ["poetry-core"]
@@ -29,6 +31,12 @@ build-backend = "poetry.core.masonry.api"
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "core.project.settings.local"
 
+[tool.autoflake]
+imports = ["django", "requests", "urllib3"]
+in-place=true
+remove-all-unused-imports=true
+ignore-init-module-imports=true
+remove-unused-variables=true
 
 [tool.isort]
 multi_line_output=3

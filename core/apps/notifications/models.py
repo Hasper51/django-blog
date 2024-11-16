@@ -31,7 +31,7 @@ class Notification(models.Model):
     actor = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='acted_notifications',
     )
-    type = models.CharField(max_length=50, choices=NOTIFICATION_TYPES)
+    type = models.CharField(max_length=50, choices=NOTIFICATION_TYPES) # noqa
     post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True)
     comment = models.ForeignKey(
         Comment, on_delete=models.CASCADE, null=True, blank=True,
