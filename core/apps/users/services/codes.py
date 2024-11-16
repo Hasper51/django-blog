@@ -6,7 +6,7 @@ from abc import (
 
 from django.core.cache import cache
 
-from core.apps.users.entities import UserEntity
+from core.apps.users.entities import User
 from core.apps.users.exceptions.codes import (
     CodeNotFoundException,
     CodesNotEqualException,
@@ -15,16 +15,16 @@ from core.apps.users.exceptions.codes import (
 
 class BaseCodeService(ABC):
     @abstractmethod
-    def generate_code(self, user: UserEntity) -> str:
+    def generate_code(self, user: User) -> str:
         ...
 
     @abstractmethod
-    def validate_code(self, code: str, user: UserEntity) -> None:
+    def validate_code(self, code: str, user: User) -> None:
         ...
 
 
 class DjangoCacheCodeService(BaseCodeService):
-    def generate_code(self, user: UserEntity) -> str:
+    def generate_code(self, user: User) -> str:
         code = ''.join(random.choices('0123456789', k=6))
 
         # Store the code in the cache with a unique key
@@ -33,7 +33,7 @@ class DjangoCacheCodeService(BaseCodeService):
         cache.set(user.email, code) # Can set parameter: timeout=60
         return code
 
-    def validate_code(self, code: str, user: UserEntity) -> None:
+    def validate_code(self, code: str, user: User) -> None:
         cached_code = cache.get(user.email)
 
         if cached_code is None:

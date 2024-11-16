@@ -14,6 +14,6 @@ class Post:
     id: int # noqa
     image: str
     caption: str
-    author: str
+    user: str
     created_at: datetime
     updated_at: datetime

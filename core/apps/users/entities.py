@@ -3,6 +3,6 @@ from datetime import datetime
 
 
 @dataclass
-class UserEntity:
+class User:
     email: str
     date_joined: datetime

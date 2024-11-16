@@ -7,7 +7,7 @@ from core.apps.posts.models import Post
 class PostModelFactory(DjangoModelFactory):
     image = factory.Faker("image_url")
     caption = factory.Faker("text")
-    author = factory.SubFactory("tests.factories.users.UserModelFactory")
+    user = factory.SubFactory("tests.factories.users.UserModelFactory")
 
     class Meta:
         model = Post

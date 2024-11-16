@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Функция для ожидания доступности порта
+#Функция для ожидания доступности порта
 wait_for_port() {
     local host=${POSTGRES_HOST}
     local port=${POSTGRES_PORT}

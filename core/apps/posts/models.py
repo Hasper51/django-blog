@@ -24,7 +24,7 @@ class Post(TimeBaseModel):
 
     image = models.ImageField(upload_to="posts/", blank=True)
     caption = models.TextField(max_length=1000, blank=True)
-    author = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='posts')
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='posts')
 
     class Meta:
         verbose_name = 'Post'
@@ -32,14 +32,14 @@ class Post(TimeBaseModel):
         ordering = ['created_at']
 
     def __str__(self):
-        return f"Post by {self.author} at {self.created_at}"
+        return f"Post by {self.user} at {self.created_at}"
 
     def to_entity(self) -> PostEntity:
         return PostEntity(
             id=self.id,
             image=self.image.url,
             caption=self.caption,
-            author=self.author.username,
+            user=self.user.username,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -53,9 +53,9 @@ class Comment(TimeBaseModel):
 
     """
 
-    text = models.TextField(max_length=500)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    text = models.TextField(max_length=500, verbose_name='Comment text', blank=True, default='')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Commentator', related_name='post_comments')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='Post', related_name='post_comments')
 
     class Meta:
         verbose_name = 'Comment'

@@ -16,7 +16,7 @@ class PostSchema(BaseModel):
     id: int  # noqa
     image: str
     caption: str
-    author: str
+    user: str
     created_at: datetime
     updated_at: datetime | None = None
 
@@ -26,7 +26,7 @@ class PostSchema(BaseModel):
             id=entity.id,
             image=entity.image,
             caption=entity.caption,
-            author=entity.author,
+            user=entity.user,
             created_at=entity.created_at,
             updated_at=entity.updated_at,
         )
