@@ -13,11 +13,9 @@ from core.api.schemas import (
 )
 from core.api.v1.posts.filters import PostFilters
 from core.api.v1.posts.schemas import PostSchema
-from core.apps.posts.containers import get_container
-from core.apps.posts.services.posts import (
-    BasePostService,
-    ORMPostService,
-)
+from core.apps.posts.services.posts import BasePostService
+from core.apps.posts.filters.posts import PostFilters as PostFiltersEntity
+from core.project.containers import get_container
 
 
 router = Router(tags=['Posts'])
@@ -31,7 +29,7 @@ def get_post_list_handler(
 ) -> ApiResponce[ListPaginatedResponce[PostSchema]]:
     container = get_container()
     service: BasePostService = container.resolve(BasePostService)
-    post_list = service.get_post_list(filters=filters, pagination=pagination_in)
+    post_list = service.get_post_list(filters=PostFiltersEntity(search=filters.search), pagination=pagination_in)
     post_count = service.get_post_count(filters=filters)
     items = [PostSchema.from_entity(obj) for obj in post_list]
     pagination_out = PaginationOut(

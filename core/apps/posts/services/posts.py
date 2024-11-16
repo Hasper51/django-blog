@@ -8,8 +8,9 @@ from typing import Iterable
 from django.db.models import Q
 
 from core.api.filters import PaginationIn
-from core.api.v1.posts.filters import PostFilters
+
 from core.apps.posts.entities.posts import Post
+from core.apps.posts.filters.posts import PostFilters
 from core.apps.posts.models import Post as PostModel
 
 
