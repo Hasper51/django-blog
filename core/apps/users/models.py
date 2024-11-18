@@ -2,6 +2,7 @@ from uuid import uuid4
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
 from core.apps.users.entities import User
 
 
@@ -22,7 +23,6 @@ class User(AbstractUser):
         default=uuid4,
     )
 
-
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'
@@ -31,7 +31,7 @@ class User(AbstractUser):
         return self.username
 
     def to_entity(self) -> User:
-        return User(self.email, self.date_joined)
+        return User(id=self.pk, email=self.email, date_joined=self.date_joined)
 
 
 class Follow(models.Model):

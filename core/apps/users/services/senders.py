@@ -11,7 +11,7 @@ from core.apps.users.entities import User
 class BaseSenderService(ABC):
     @abstractmethod
     def send_code(self, user: User, code: str) -> None:
-        ... 
+        ...
 
 
 class PushSenderService(BaseSenderService):

@@ -13,8 +13,8 @@ from core.api.schemas import (
 )
 from core.api.v1.posts.filters import PostFilters
 from core.api.v1.posts.schemas import PostSchema
-from core.apps.posts.services.posts import BasePostService
 from core.apps.posts.filters.posts import PostFilters as PostFiltersEntity
+from core.apps.posts.services.posts import BasePostService
 from core.project.containers import get_container
 
 

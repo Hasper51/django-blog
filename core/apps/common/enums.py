@@ -2,7 +2,5 @@ from enum import Enum
 
 
 class EntityStatus(Enum):
-    """
-    Entity status
-    """
+    """Entity status."""
     NOT_LOADED = 'not_loaded'

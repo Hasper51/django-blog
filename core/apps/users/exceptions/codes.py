@@ -27,4 +27,4 @@ class CodesNotEqualException(CodeException):
 
     @property
     def message(self):
-        return "Codes are not equal"    
+        return "Codes are not equal"

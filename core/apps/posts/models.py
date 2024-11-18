@@ -2,7 +2,9 @@
 from django.db import models
 
 from core.apps.common.models import TimeBaseModel
+from core.apps.posts.entities.comments import Comment as CommentEntity
 from core.apps.posts.entities.posts import Post as PostEntity
+from core.apps.users.entities import User as UserEntity
 from core.apps.users.models import User
 
 
@@ -64,6 +66,28 @@ class Comment(TimeBaseModel):
 
     def __str__(self):
         return f"Comment by {self.user.username} on {self.post}"
+
+    @classmethod
+    def from_entity(
+        cls,
+        comment: CommentEntity,
+        post: PostEntity,
+        user: UserEntity,
+    ) -> 'Comment':
+        return cls(
+            pk=comment.id,
+            post_id=post.id,
+            user_id=user.id,
+            text=comment.text,
+        )
+
+    def to_entity(self) -> CommentEntity:
+        return CommentEntity(
+            id=self.id,
+            text=self.text,
+            created_at=self.created_at,
+            updated_at=self.updated_at,
+        )
 
 
 class PostLike(models.Model):

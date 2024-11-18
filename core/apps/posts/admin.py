@@ -1,6 +1,9 @@
 from django.contrib import admin
 
-from core.apps.posts.models import Comment, Post
+from core.apps.posts.models import (
+    Comment,
+    Post,
+)
 
 
 class CommentInlineAdmin(admin.TabularInline):
@@ -18,4 +21,3 @@ class PostAdmin(admin.ModelAdmin):
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('id', 'text', 'post', 'user', 'created_at', 'updated_at')
     list_select_related = ('post', 'user')
-

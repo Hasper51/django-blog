@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 
+
 UserModel = get_user_model()
 
 
@@ -13,7 +14,7 @@ class CustomUserModelBackend(ModelBackend):
             return
         try:
             user = UserModel._default_manager.get(
-                Q(username__exact=username) | (Q(email__iexact=username) & Q(email_verified=True))
+                Q(username__exact=username) | (Q(email__iexact=username) & Q(email_verified=True)),
             )
         except UserModel.DoesNotExist:
             # Run the default password hasher once to reduce the timing

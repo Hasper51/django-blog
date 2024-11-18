@@ -25,12 +25,12 @@ class BaseCodeService(ABC):
 
 class DjangoCacheCodeService(BaseCodeService):
     def generate_code(self, user: User) -> str:
-        code = ''.join(random.choices('0123456789', k=6))
+        code = ''.join(random.SystemRandom.choices('0123456789', k=6))
 
         # Store the code in the cache with a unique key
         # This example uses Django's cache framework, but you can use any caching library you prefer
 
-        cache.set(user.email, code) # Can set parameter: timeout=60
+        cache.set(user.email, code, timeout=300)  # Can set parameter: timeout=60
         return code
 
     def validate_code(self, code: str, user: User) -> None:
