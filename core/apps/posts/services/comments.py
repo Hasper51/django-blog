@@ -1,4 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import (
+    ABC,
+    abstractmethod,
+)
+
 from core.apps.posts.entities.comments import Comment as CommentEntity
 from core.apps.posts.entities.posts import Post as PostEntity
 from core.apps.posts.models import Comment as CommentModel
@@ -11,7 +15,7 @@ class BaseCommentService(ABC):
         self,
         user: UserEntity,
         post: PostEntity,
-        comment: CommentEntity
+        comment: CommentEntity,
     ) -> CommentEntity:
         ...
 
@@ -26,7 +30,7 @@ class ORMCommentService(BaseCommentService):
         comment_dto: CommentModel = CommentModel.from_entity(
             comment=comment,
             post=post,
-            user=user
+            user=user,
         )
         comment_dto.save()
         

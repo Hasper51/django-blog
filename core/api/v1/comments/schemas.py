@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from pydantic import BaseModel
 
 from core.apps.posts.entities.comments import Comment as CommentEntity

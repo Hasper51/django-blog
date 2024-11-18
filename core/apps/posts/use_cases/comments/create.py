@@ -17,7 +17,7 @@ class CreateCommentUseCase:
         self,
         post_id: int,
         user_token: str,
-        comment: CommentEntity
+        comment: CommentEntity,
     ) -> CommentEntity:
         user = self.user_service.get_by_token(token=user_token)
         post = self.post_service.get_by_id(post_id=post_id)

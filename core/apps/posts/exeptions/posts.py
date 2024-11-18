@@ -9,4 +9,4 @@ class PostNotFound(ServiceException):
     
     @property
     def message(self):
-        return "Product not found"
+        return "Post not found"

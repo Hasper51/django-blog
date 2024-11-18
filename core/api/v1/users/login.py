@@ -1,12 +1,14 @@
 # core\api\v1\posts\handlers.py
+from django.contrib.auth import (
+    authenticate,
+    login,
+    logout,
+)
+from django.middleware.csrf import get_token
 from ninja import Router
 from ninja.errors import HttpError
 from ninja.security import django_auth
-from django.contrib.auth import authenticate, login, logout
-from django.middleware.csrf import get_token
 
-
-from . import schemas
 from core.api.schemas import ApiResponce
 from core.api.v1.users.schemas import (
     AuthOutSchema,
@@ -14,6 +16,8 @@ from core.api.v1.users.schemas import (
 )
 from core.apps.users.services.auth import BaseAuthService
 from core.project.containers import get_container
+
+from . import schemas
 
 
 router = Router(tags=['Login'])
@@ -56,12 +60,12 @@ def logout_view(request):
 def user(request):
     secret_fact = (
         "The moment one gives close attention to any thing, even a blade of grass",
-        "it becomes a mysterious, awesome, indescribably magnificent world in itself."
+        "it becomes a mysterious, awesome, indescribably magnificent world in itself.",
     )
     return {
         "username": request.user.username,
         "email": request.user.email,
-        "secret_fact": secret_fact
+        "secret_fact": secret_fact,
     }
 
 
