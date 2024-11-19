@@ -1,6 +1,4 @@
-# Django Boilerplate with Docker Compose, Makefile, and PostgreSQL
-
-This is a basic template for Django projects configured to use Docker Compose, Makefile, and PostgreSQL.
+# Django Blog with Docker Compose, Makefile, and PostgreSQL
 
 ## Requirements
 
