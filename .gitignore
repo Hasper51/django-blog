@@ -9,3 +9,5 @@ migrations/
 !static/.gitkeep
 *.sqlite*
 media
+.kolo
+.pytest_cache

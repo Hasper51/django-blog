@@ -2,7 +2,7 @@
 name = "django-example"
 version = "0.1.0"
 description = ""
-authors = ["greedWizard <skavik46111@gmail.com>"]
+authors = [""]
 license = "MIT"
 readme = "README.md"
 

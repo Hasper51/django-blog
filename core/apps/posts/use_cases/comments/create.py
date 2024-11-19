@@ -22,5 +22,5 @@ class CreateCommentUseCase:
         user = self.user_service.get_by_token(token=user_token)
         post = self.post_service.get_by_id(post_id=post_id)
         saved_comment = self.comment_service.save_comment(post=post, user=user, comment=comment)
-        
+
         return saved_comment
