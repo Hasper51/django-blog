@@ -13,6 +13,7 @@ from core.apps.posts.exeptions.posts import PostNotFound
 from core.apps.posts.filters.posts import PostFilters
 from core.apps.posts.models import Post as PostModel
 
+from django.core.exceptions import PermissionDenied
 
 '''Сервисы принимают entity-объекты и возвращают entity-объекты
 '''
@@ -29,6 +30,9 @@ class BasePostService(ABC):
 
     @abstractmethod
     def get_by_id(self, post_id: int) -> int: ...
+
+    @abstractmethod
+    def delete_post(self, post_id: int, user_id: int) -> None: ...
 
 
 class ORMPostService(BasePostService):
@@ -62,3 +66,17 @@ class ORMPostService(BasePostService):
             raise PostNotFound(post_id=post_id)
 
         return post_dto.to_entity()
+
+    def delete_post(self, post_id: int, user_id: int) -> None:
+        try:
+            post_dto = PostModel.objects.get(pk=post_id)
+        except PostModel.DoesNotExist:
+            raise PostNotFound(post_id=post_id)
+
+        # Проверяем, является ли пользователь создателем поста
+        if post_dto.user.id != user_id:
+            raise PermissionDenied("You are not the owner of this post")
+
+        # Удаляем пост
+        post_dto.delete()
+

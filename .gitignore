@@ -8,6 +8,6 @@ static/*
 migrations/
 !static/.gitkeep
 *.sqlite*
-media
+media/posts
 .kolo
 .pytest_cache

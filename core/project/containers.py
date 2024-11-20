@@ -10,7 +10,7 @@ from core.apps.posts.services.posts import (
     BasePostService,
     ORMPostService,
 )
-from core.apps.posts.use_cases.comments.create import CreateCommentUseCase
+from core.apps.posts.use_cases.comments.create import CreateCommentUseCase, DeleteCommentUseCase
 from core.apps.users.services.auth import (
     AuthService,
     BaseAuthService,
@@ -56,4 +56,5 @@ def _initialize_container() -> punq.Container:
     container.register(BaseAuthService, AuthService)
     container.register(BaseCommentService, ORMCommentService)
     container.register(CreateCommentUseCase)
+    container.register(DeleteCommentUseCase)
     return container

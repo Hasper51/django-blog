@@ -16,7 +16,7 @@ class PostSchema(BaseModel):
     id: int  # noqa
     image: str
     caption: str
-    user: str
+    user: int
     created_at: datetime
     updated_at: datetime | None = None
 
@@ -33,3 +33,12 @@ class PostSchema(BaseModel):
 
 
 PostListSchema = list[PostSchema]
+
+class PostInSchema(BaseModel):
+    post_id: int
+    user_id: int
+
+
+class PostOutSchema(BaseModel):
+    message: str
+

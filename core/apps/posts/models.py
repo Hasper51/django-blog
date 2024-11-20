@@ -41,7 +41,7 @@ class Post(TimeBaseModel):
             id=self.id,
             image=self.image.url,
             caption=self.caption,
-            user=self.user.username,
+            user=self.user.id,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -75,7 +75,7 @@ class Comment(TimeBaseModel):
         user: UserEntity,
     ) -> 'Comment':
         return cls(
-            pk=comment.id,
+            id=comment.id,
             post_id=post.id,
             user_id=user.id,
             text=comment.text,

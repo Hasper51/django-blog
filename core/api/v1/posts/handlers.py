@@ -12,11 +12,12 @@ from core.api.schemas import (
     PaginationOut,
 )
 from core.api.v1.posts.filters import PostFilters
-from core.api.v1.posts.schemas import PostSchema
+from core.api.v1.posts.schemas import PostInSchema, PostOutSchema, PostSchema
 from core.apps.posts.filters.posts import PostFilters as PostFiltersEntity
 from core.apps.posts.services.posts import BasePostService
 from core.project.containers import get_container
 
+from ninja.security import django_auth
 
 router = Router(tags=['Posts'])
 
@@ -39,4 +40,15 @@ def get_post_list_handler(
     )
     return ApiResponce(
         data=ListPaginatedResponce(items=items, pagination=pagination_out),
+    )
+
+
+@router.post('{post_id}/delete', response=ApiResponce[PostOutSchema], operation_id='deletePost', auth=django_auth)
+def del_post_handler(request: HttpRequest, schema: Query[PostInSchema]) -> ApiResponce[PostOutSchema]:
+    container = get_container()
+    service: BasePostService = container.resolve(BasePostService)
+    service.delete_post(post_id=schema.post_id, user_id=schema.user_id)
+    return ApiResponce(
+        data=PostOutSchema(
+            message=f'User {schema.user_id} deleted post {schema.post_id}')
     )
