@@ -4,7 +4,7 @@ EXEC = docker exec -it
 DB_CONTAINER = example-db
 LOGS = docker logs
 ENV = --env-file .env
-APP_FILE = docker_compose/app.yaml
+APP_FILE = docker_compose/app.yamlstorages
 APP_CONTAINER = main-app
 MANAGE_PY = python manage.py
 

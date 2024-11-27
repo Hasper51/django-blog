@@ -1,14 +1,20 @@
 from django.http import HttpRequest
-from ninja import Header, Router
+from ninja import Router
 from ninja.errors import HttpError
+from ninja.security import django_auth
 
 from core.api.schemas import ApiResponce
-from core.api.v1.comments.schemas import CommentInSchema, CommentOutSchema
+from core.api.v1.comments.schemas import (
+    CommentInSchema,
+    CommentOutSchema,
+)
 from core.apps.common.exception import ServiceException
-from core.apps.posts.use_cases.comments.create import CreateCommentUseCase, DeleteCommentUseCase
+from core.apps.posts.use_cases.comments.create import (
+    CreateCommentUseCase,
+    DeleteCommentUseCase,
+)
 from core.project.containers import get_container
 
-from ninja.security import django_auth
 
 router = Router(tags=['Comments'])
 
@@ -27,13 +33,13 @@ def create_comment(
         result = use_case.execute(
             user_token=token,
             post_id=post_id,
-            comment=schema.to_entity()
+            comment=schema.to_entity(),
         )
     except ServiceException as e:
         raise HttpError(status_code=400, message=e.message)
 
     return ApiResponce(
-        data=CommentOutSchema.from_entity(result)
+        data=CommentOutSchema.from_entity(result),
     )
 
 
@@ -57,5 +63,5 @@ def delete_comment(
         raise HttpError(status_code=400, message=e.message)
 
     return ApiResponce(
-        data=CommentOutSchema.from_entity(result)
+        data=CommentOutSchema.from_entity(result),
     )

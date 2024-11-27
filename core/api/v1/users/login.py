@@ -27,10 +27,10 @@ router = Router(tags=['Login'])
 def get_csrf_token(request):
     return {"csrftoken": get_token(request)}
 
-
+# TODO если пользователь с неверефицированным email, пробует зайти с помощи email, а не username, то user = None. Нужно исправить
 @router.post("/login", response=ApiResponce[AuthOutSchema], operation_id='login')
 def login_view(request, schema: SignInSchema) -> ApiResponce[AuthOutSchema]:
-    user = authenticate(request, email=schema.email, username=schema.email, password=schema.password, email_verified=True)
+    user = authenticate(request, username=schema.email, password=schema.password)
     
     if user is not None:
         if user.email_verified:

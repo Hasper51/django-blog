@@ -4,6 +4,7 @@ from ninja import (
     Query,
     Router,
 )
+from ninja.security import django_auth
 
 from core.api.filters import PaginationIn
 from core.api.schemas import (
@@ -12,12 +13,15 @@ from core.api.schemas import (
     PaginationOut,
 )
 from core.api.v1.posts.filters import PostFilters
-from core.api.v1.posts.schemas import PostInSchema, PostOutSchema, PostSchema
+from core.api.v1.posts.schemas import (
+    PostInSchema,
+    PostOutSchema,
+    PostSchema,
+)
 from core.apps.posts.filters.posts import PostFilters as PostFiltersEntity
 from core.apps.posts.services.posts import BasePostService
 from core.project.containers import get_container
 
-from ninja.security import django_auth
 
 router = Router(tags=['Posts'])
 
@@ -50,5 +54,6 @@ def del_post_handler(request: HttpRequest, schema: Query[PostInSchema]) -> ApiRe
     service.delete_post(post_id=schema.post_id, user_id=schema.user_id)
     return ApiResponce(
         data=PostOutSchema(
-            message=f'User {schema.user_id} deleted post {schema.post_id}')
+            message=f'User {schema.user_id} deleted post {schema.post_id}',
+        ),
     )

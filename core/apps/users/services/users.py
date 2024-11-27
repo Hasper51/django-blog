@@ -44,6 +44,9 @@ class ORMUserService(BaseUserService):
 
     def get(self, email: str) -> User:
         user_dto = UserModel.objects.get(email=email)
+        
+        def __str__(self):
+            return f"User(email={self.email})"
         return user_dto.to_entity()
 
     def generate_token(self, user: User) -> str:

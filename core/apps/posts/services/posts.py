@@ -5,6 +5,7 @@ from abc import (
 )
 from typing import Iterable
 
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 
 from core.api.filters import PaginationIn
@@ -13,7 +14,6 @@ from core.apps.posts.exeptions.posts import PostNotFound
 from core.apps.posts.filters.posts import PostFilters
 from core.apps.posts.models import Post as PostModel
 
-from django.core.exceptions import PermissionDenied
 
 '''Сервисы принимают entity-объекты и возвращают entity-объекты
 '''

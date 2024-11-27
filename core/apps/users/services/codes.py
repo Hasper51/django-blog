@@ -25,7 +25,7 @@ class BaseCodeService(ABC):
 
 class DjangoCacheCodeService(BaseCodeService):
     def generate_code(self, user: User) -> str:
-        code = ''.join(random.SystemRandom.choices('0123456789', k=6))
+        code = ''.join(random.choices('0123456789', k=6))
 
         # Store the code in the cache with a unique key
         # This example uses Django's cache framework, but you can use any caching library you prefer

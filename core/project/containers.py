@@ -10,7 +10,10 @@ from core.apps.posts.services.posts import (
     BasePostService,
     ORMPostService,
 )
-from core.apps.posts.use_cases.comments.create import CreateCommentUseCase, DeleteCommentUseCase
+from core.apps.posts.use_cases.comments.create import (
+    CreateCommentUseCase,
+    DeleteCommentUseCase,
+)
 from core.apps.users.services.auth import (
     AuthService,
     BaseAuthService,
@@ -49,7 +52,7 @@ def _initialize_container() -> punq.Container:
         BaseSenderService,
         ComposedSenderService,
         sender_services=(
-            PushSenderService(),
+            # PushSenderService(),
             EmailSenderService(),
         ),
     )
