@@ -33,6 +33,8 @@ class BasePostService(ABC):
 
     @abstractmethod
     def delete_post(self, post_id: int, user_id: int) -> None: ...
+    
+    
 
 
 class ORMPostService(BasePostService):

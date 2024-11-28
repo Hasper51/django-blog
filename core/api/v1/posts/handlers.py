@@ -5,7 +5,7 @@ from ninja import (
     Router,
 )
 from ninja.security import django_auth
-
+from ninja.errors import HttpError
 from core.api.filters import PaginationIn
 from core.api.schemas import (
     ApiResponce,
@@ -18,8 +18,13 @@ from core.api.v1.posts.schemas import (
     PostOutSchema,
     PostSchema,
 )
+from core.apps.common.exception import ServiceException
+from core.apps.posts.exeptions.post_like import LikeAlreadyExists, LikeDoesNotExist
+from core.apps.posts.exeptions.posts import PostNotFound
 from core.apps.posts.filters.posts import PostFilters as PostFiltersEntity
+from core.apps.posts.services.post_likes import BasePostLikeService
 from core.apps.posts.services.posts import BasePostService
+from core.apps.users.exceptions.user import UserNotExist
 from core.project.containers import get_container
 
 
@@ -47,7 +52,7 @@ def get_post_list_handler(
     )
 
 
-@router.post('{post_id}/delete', response=ApiResponce[PostOutSchema], operation_id='deletePost', auth=django_auth)
+@router.delete('{post_id}/delete', response=ApiResponce[PostOutSchema], operation_id='deletePost', auth=django_auth)
 def del_post_handler(request: HttpRequest, schema: Query[PostInSchema]) -> ApiResponce[PostOutSchema]:
     container = get_container()
     service: BasePostService = container.resolve(BasePostService)
@@ -57,3 +62,59 @@ def del_post_handler(request: HttpRequest, schema: Query[PostInSchema]) -> ApiRe
             message=f'User {schema.user_id} deleted post {schema.post_id}',
         ),
     )
+
+# Helper to get a Like's service
+def get_post_like_service() -> BasePostLikeService:
+    container = get_container()
+    return container.resolve(BasePostLikeService)
+    
+@router.post('{post_id}/like', response=ApiResponce[PostOutSchema], operation_id='likePost', auth=django_auth)
+def like_post_handler(request: HttpRequest, schema: Query[PostInSchema]) -> ApiResponce[PostOutSchema]:
+    """Like post"""
+    service = get_post_like_service()
+    try:
+        service.add_like_to_post(post_id=schema.post_id, user_id=schema.user_id)
+        return ApiResponce(
+            data=PostOutSchema(
+                message=f'User {schema.user_id} liked post {schema.post_id}',
+            )
+        )
+    except ServiceException as e:
+        raise HttpError(status_code=400, message=e.message)
+
+
+@router.delete('{post_id}/unlike', response=ApiResponce[PostOutSchema], operation_id='unlikePost', auth=django_auth)
+def unlike_post_handler(request: HttpRequest, schema: Query[PostInSchema]) -> ApiResponce[PostOutSchema]:
+    """Removing like"""
+    service = get_post_like_service()
+    try:
+        service.delete_like_from_post(post_id=schema.post_id, user_id=schema.user_id)
+        return ApiResponce(
+            data=PostOutSchema(
+                message=f'User {schema.user_id} unliked post {schema.post_id}',
+            )
+        )
+    except ServiceException as e:
+        raise HttpError(status_code=400, message=e.message)
+
+
+@router.get('{post_id}/likes/count', response=ApiResponce[int], operation_id='getPostLikesCount', auth=django_auth)
+def get_post_likes_count(request: HttpRequest, post_id: int) -> ApiResponce[int]:
+    """Get the number of likes for fasting"""
+    service = get_post_like_service()
+    try:
+        count = service.get_likes_count(post_id=post_id)
+        return ApiResponce(data=count)
+    except ServiceException as e:
+        raise HttpError(status_code=404, message=e.message)
+
+
+@router.get('{post_id}/likes/users', response=ApiResponce[list[int]], operation_id='getPostLikesUsers', auth=django_auth)
+def get_post_likes_users(request: HttpRequest, post_id: int) -> ApiResponce[list[int]]:
+    """Get a list of users who like post"""
+    service = get_post_like_service()
+    try:
+        user_ids = service.get_users_who_liked_post(post_id=post_id)
+        return ApiResponce(data=user_ids)
+    except ServiceException as e:
+        raise HttpError(status_code=404, message=e.message)

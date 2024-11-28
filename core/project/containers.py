@@ -6,6 +6,7 @@ from core.apps.posts.services.comments import (
     BaseCommentService,
     ORMCommentService,
 )
+from core.apps.posts.services.post_likes import BasePostLikeService, ORMPostLikeService
 from core.apps.posts.services.posts import (
     BasePostService,
     ORMPostService,
@@ -48,6 +49,7 @@ def _initialize_container() -> punq.Container:
     # initialize posts
     container.register(BasePostService, ORMPostService)
 
+    container.register(BasePostLikeService, ORMPostLikeService)
     # initialize users
     container.register(BaseUserService, ORMUserService)
     container.register(BaseCodeService, DjangoCacheCodeService)
