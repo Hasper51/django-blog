@@ -1,5 +1,4 @@
 import yagmail
-
 from celery import shared_task
 
 
@@ -16,7 +15,7 @@ def send_email_yandex(smtp_server: str, smtp_port: int, user_email: str, user_pa
         yag.send(
             to=recipient_email,
             subject=subject,
-            contents=body
+            contents=body,
         )
         print("Email отправлен успешно.")
     except Exception as e:

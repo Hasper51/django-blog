@@ -10,3 +10,11 @@ class UserTokenInvalid(ServiceException):
     @property
     def message(self):
         return "A user with provided token is not found"
+
+
+@dataclass(eq=False)
+class UserNotExist(ServiceException):
+    
+    @property
+    def message(self):
+        return "A user does not exist"

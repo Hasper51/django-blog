@@ -22,11 +22,14 @@ from core.apps.users.services.codes import (
     BaseCodeService,
     DjangoCacheCodeService,
 )
+from core.apps.users.services.follow import (
+    BaseFollowUserService,
+    ORMFollowUserService,
+)
 from core.apps.users.services.senders import (
     BaseSenderService,
     ComposedSenderService,
     EmailSenderService,
-    PushSenderService,
 )
 from core.apps.users.services.users import (
     BaseUserService,
@@ -57,6 +60,9 @@ def _initialize_container() -> punq.Container:
         ),
     )
     container.register(BaseAuthService, AuthService)
+    
+    container.register(BaseFollowUserService, ORMFollowUserService)
+    
     container.register(BaseCommentService, ORMCommentService)
     container.register(CreateCommentUseCase)
     container.register(DeleteCommentUseCase)

@@ -3,7 +3,10 @@ from uuid import uuid4
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from core.apps.users.entities import User
+from core.apps.users.entities import (
+    Following as FollowingEntity,
+    User,
+)
 
 
 # Create your models here.
@@ -34,27 +37,39 @@ class User(AbstractUser):
         return User(id=self.pk, email=self.email, date_joined=self.date_joined)
 
 
-class Follow(models.Model):
+class Following(models.Model):
     """Represents the following relationship between users.
 
-    A user can follow multiple users and can be followed by multiple
+    A user can follow multiple users and can be following by multiple
     users.
 
     """
 
     follower = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='follower',
+        User, on_delete=models.CASCADE, related_name='following',
     )
-    followed = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='followed',
+    following = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='followers',
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Follow'
         verbose_name_plural = 'Follows'
-        unique_together = ('follower', 'followed')
+        unique_together = ('follower', 'following')
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['follower']),
+            models.Index(fields=['following']),
+        ]
 
     def __str__(self):
-        return f"{self.follower.username} follows {self.followed.username}"
+        return f"{self.follower.username} follows {self.following.username}"
+
+    def to_entity(self) -> FollowingEntity:
+        return Following(
+            id=self.id,
+            follower_id=self.follower.id,
+            following_id=self.following.id,
+            created_at=self.created_at,
+        )
