@@ -34,7 +34,7 @@ class Post(TimeBaseModel):
         ordering = ['created_at']
 
     def __str__(self):
-        return f"Post by {self.user} at {self.created_at}"
+        return f"Post {self.id} by {self.user} at {self.created_at}"
 
     def to_entity(self) -> PostEntity:
         return PostEntity(
@@ -65,7 +65,7 @@ class Comment(TimeBaseModel):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"Comment by {self.user.username} on {self.post}"
+        return f"Comment {self.id} by {self.user.username} on {self.post}"
 
     @classmethod
     def from_entity(

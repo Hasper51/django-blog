@@ -16,6 +16,7 @@ class User(AbstractUser):
     Adds additional fields for user profile functionality.
 
     """
+    email = models.EmailField(unique=True)
     email_verified = models.BooleanField(default=False)
     bio = models.TextField(blank=True, verbose_name="Bio")
     profile_image = models.ImageField(upload_to="user_images/", blank=True, null=True)

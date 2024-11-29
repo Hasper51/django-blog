@@ -2,6 +2,7 @@ from functools import lru_cache
 
 import punq
 
+from core.apps.posts.services.comment_likes import BaseCommentLikeService, ORMCommentLikeService
 from core.apps.posts.services.comments import (
     BaseCommentService,
     ORMCommentService,
@@ -50,6 +51,7 @@ def _initialize_container() -> punq.Container:
     container.register(BasePostService, ORMPostService)
 
     container.register(BasePostLikeService, ORMPostLikeService)
+    
     # initialize users
     container.register(BaseUserService, ORMUserService)
     container.register(BaseCodeService, DjangoCacheCodeService)
@@ -68,4 +70,5 @@ def _initialize_container() -> punq.Container:
     container.register(BaseCommentService, ORMCommentService)
     container.register(CreateCommentUseCase)
     container.register(DeleteCommentUseCase)
+    container.register(BaseCommentLikeService, ORMCommentLikeService)
     return container

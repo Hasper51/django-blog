@@ -33,3 +33,12 @@ class CommentOutSchema(CommentInSchema):
             created_at=comment.created_at,
             updated_at=comment.updated_at,
         )
+
+
+class CommentLikeInSchema(BaseModel):
+    comment_id: int
+    user_id: int
+
+
+class CommentLikeOutSchema(BaseModel):
+    message: str
