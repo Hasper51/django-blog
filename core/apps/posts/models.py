@@ -85,6 +85,7 @@ class Comment(TimeBaseModel):
         return CommentEntity(
             id=self.id,
             text=self.text,
+            user=self.user,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )

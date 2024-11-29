@@ -1,3 +1,4 @@
+from typing import List
 from django.http import HttpRequest
 from ninja import (
     Query,
@@ -11,10 +12,12 @@ from core.api.v1.comments.schemas import (
     CommentLikeInSchema,
     CommentLikeOutSchema,
     CommentOutSchema,
+    CommentListSchema,
 )
 from core.api.v1.users.handlers.auth import AuthBearer
 from core.apps.common.exception import ServiceException
 from core.apps.posts.services.comment_likes import BaseCommentLikeService
+from core.apps.posts.services.comments import BaseCommentService
 from core.apps.posts.use_cases.comments.create import (
     CreateCommentUseCase,
     DeleteCommentUseCase,
@@ -24,7 +27,22 @@ from core.project.containers import get_container
 
 router = Router(tags=['Comments'], auth=AuthBearer())
 
+@router.get('{post_id}/comments', response=ApiResponce[CommentListSchema], operation_id='getComments')
+def get_comments(
+    request: HttpRequest,
+    post_id: int,
+) -> ApiResponce[CommentListSchema]:
+    container = get_container()
+    service = container.resolve(BaseCommentService)
 
+    try:
+        comments = service.get_comments_by_post(post_id=post_id)
+    except ServiceException as e:
+        raise HttpError(status_code=400, message=e.message)
+
+    return ApiResponce(
+        data=CommentListSchema(list(map(CommentOutSchema.from_entity, comments)))
+    )
 @router.post('{post_id}/comment', response=ApiResponce[CommentOutSchema], operation_id='createComment')
 def create_comment(
     request: HttpRequest,

@@ -22,6 +22,7 @@ class CreateCommentSchema(BaseModel):
 
 class CommentOutSchema(CommentInSchema):
     id: int # noqa
+    username: str
     created_at: datetime
     updated_at: datetime | None
 
@@ -30,9 +31,13 @@ class CommentOutSchema(CommentInSchema):
         return cls(
             id=comment.id,
             text=comment.text,
+            username=comment.user.username,
             created_at=comment.created_at,
             updated_at=comment.updated_at,
         )
+
+
+CommentListSchema = list[CommentOutSchema]
 
 
 class CommentLikeInSchema(BaseModel):

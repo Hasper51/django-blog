@@ -2,6 +2,7 @@ from abc import (
     ABC,
     abstractmethod,
 )
+from typing import List
 
 from core.apps.posts.entities.comments import Comment as CommentEntity
 from core.apps.posts.entities.posts import Post as PostEntity
@@ -31,6 +32,9 @@ class BaseCommentService(ABC):
 
     @abstractmethod
     def get_by_id(self, comment_id: int) -> CommentEntity: ...
+
+    @abstractmethod
+    def get_comments_by_post(self, post_id: int) -> List[CommentEntity]: ...
 
 
 class ORMCommentService(BaseCommentService):
@@ -71,3 +75,7 @@ class ORMCommentService(BaseCommentService):
             raise CommentNotFound(comment_id=comment_id)
 
         return comment_dto.to_entity()
+
+    def get_comments_by_post(self, post_id: int) -> List[CommentEntity]:
+        comment_dtos = CommentModel.objects.filter(post_id=post_id)
+        return [comment_dto.to_entity() for comment_dto in comment_dtos]
