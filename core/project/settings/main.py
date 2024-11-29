@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -44,6 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core.apps.users.apps.UsersConfig',
     'core.apps.posts.apps.PostsConfig',
+
+    'ninja',
 ]
 
 MIDDLEWARE = [
@@ -160,6 +163,13 @@ AUTH_USER_MODEL = 'users.User'
 AUTHENTICATION_BACKENDS = [
     "core.apps.users.authentication.CustomUserModelBackend",
 ]
+
+JWT_AUTH = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ALGORITHM': 'HS256',
+    'SECRET_KEY': env('JWT_SECRET_KEY'),
+}
 
 YANDEX_MAIL = env('YANDEX_MAIL')
 YANDEX_MAIL_PASSWORD = env('YANDEX_MAIL_PASSWORD')

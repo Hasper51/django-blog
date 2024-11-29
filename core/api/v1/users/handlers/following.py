@@ -5,9 +5,8 @@ from ninja import Path, Router
 from ninja.errors import HttpError
 
 from core.api.schemas import ApiResponce
-from core.api.v1.users.schemas import (
-    AuthInSchema,
-    AuthOutSchema,
+from core.api.v1.users.handlers.auth import AuthBearer
+from core.api.v1.users.schemas.schemas import (
     FollowCreateSchema,
     FollowErrorSchema,
     FollowOutSchema,
@@ -22,7 +21,7 @@ from core.apps.users.services.follow import BaseFollowUserService
 from core.project.containers import get_container
 
 
-router = Router(tags=['Follow Users'])
+router = Router(tags=['Follow Users'], auth=AuthBearer())
 
 
 @router.delete("unfollow/{following_id}", response=ApiResponce[UnfollowOutSchema], operation_id='delete_follow')
@@ -74,7 +73,7 @@ def create_following(
     )
 
 
-@router.get("/users/{user_id}/followers", response=ApiResponce[UserFollowersOut], operation_id='get_followers')
+@router.get("{user_id}/followers", response=ApiResponce[UserFollowersOut], operation_id='get_followers')
 def get_followers_handler(request: HttpRequest, user_id: int = Path(...), page: int = 1) -> ApiResponce[FollowOutSchema]:
     container = get_container()
     service = container.resolve(BaseFollowUserService)
@@ -87,7 +86,7 @@ def get_followers_handler(request: HttpRequest, user_id: int = Path(...), page: 
     )
 
 
-@router.get("/users/{user_id}/followings", response=ApiResponce[UserFollowersOut], operation_id='get_followings')
+@router.get("{user_id}/followings", response=ApiResponce[UserFollowersOut], operation_id='get_followings')
 def get_user_followings(
     request: HttpRequest,
     user_id: int = Path(...),

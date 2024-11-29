@@ -5,6 +5,7 @@ from abc import (
 from uuid import uuid4
 
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 
 from core.apps.users.entities import User
 from core.apps.users.exceptions.user import UserTokenInvalid
@@ -29,7 +30,7 @@ class BaseUserService(ABC):
         ...
 
     @abstractmethod
-    def create_user(self, email: str, username: str, password: str) -> User:
+    def create_user(self, email: str, username: str, password: str, first_name: str, last_name: str) -> User:
         ...
 
     @abstractmethod
@@ -44,7 +45,7 @@ class ORMUserService(BaseUserService):
 
     def get(self, email: str) -> User:
         user_dto = UserModel.objects.get(email=email)
-        
+
         def __str__(self):
             return f"User(email={self.email})"
         return user_dto.to_entity()
@@ -62,14 +63,16 @@ class ORMUserService(BaseUserService):
 
         return user_dto.to_entity()
 
-    def create_user(self, email: str, username: str, password: str) -> User:
-        if UserModel.objects.filter(username=username).exists():
-            raise ValidationError("User with this username already exists")
+    def create_user(self, email: str, username: str, password: str, first_name: str, last_name: str) -> User:
+        if UserModel.objects.filter(Q(username=username) | Q(email=email)).exists():
+            raise ValidationError("User with this username or email already exists")
         try:
             user_dto = UserModel.objects.create_user(
                 email=email,
                 username=username,
                 password=password,
+                first_name=first_name,
+                last_name=last_name,
             )
         except Exception as e:
             raise e

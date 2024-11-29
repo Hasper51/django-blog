@@ -21,7 +21,7 @@ class CreateCommentSchema(BaseModel):
 
 
 class CommentOutSchema(CommentInSchema):
-    id: int
+    id: int # noqa
     created_at: datetime
     updated_at: datetime | None
 

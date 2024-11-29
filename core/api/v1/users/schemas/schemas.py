@@ -35,14 +35,6 @@ class FollowErrorSchema(Schema):
     message: str
 
 
-class AuthInSchema(Schema):
-    email: str
-
-
-class AuthOutSchema(Schema):
-    message: str
-
-
 class TokenOutSchema(Schema):
     token: str
 

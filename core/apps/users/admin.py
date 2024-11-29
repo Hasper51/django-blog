@@ -23,4 +23,3 @@ class UserAdmin(admin.ModelAdmin):
 class FollowingAdmin(admin.ModelAdmin):
     list_display = ('id', 'follower', 'following')
     search_fields = ('user', 'follower', 'following')
-    

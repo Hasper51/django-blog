@@ -34,6 +34,7 @@ class PostSchema(BaseModel):
 
 PostListSchema = list[PostSchema]
 
+
 class PostInSchema(BaseModel):
     post_id: int
     user_id: int
@@ -41,4 +42,3 @@ class PostInSchema(BaseModel):
 
 class PostOutSchema(BaseModel):
     message: str
-

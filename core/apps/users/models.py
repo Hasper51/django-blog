@@ -5,7 +5,7 @@ from django.db import models
 
 from core.apps.users.entities import (
     Following as FollowingEntity,
-    User,
+    User as UserEntity,
 )
 
 
@@ -34,8 +34,8 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-    def to_entity(self) -> User:
-        return User(id=self.pk, email=self.email, date_joined=self.date_joined)
+    def to_entity(self) -> UserEntity:
+        return UserEntity(id=self.pk, email=self.email, date_joined=self.date_joined)
 
 
 class Following(models.Model):

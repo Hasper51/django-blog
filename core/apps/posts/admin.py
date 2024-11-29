@@ -33,4 +33,3 @@ class CommentAdmin(admin.ModelAdmin):
 class PostLikeAdmin(admin.ModelAdmin):
     list_display = ('id', 'post', 'user', 'created_at')
     list_select_related = ('post', 'user')
-    

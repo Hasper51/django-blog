@@ -19,7 +19,7 @@ class BaseCommentService(ABC):
         comment: CommentEntity,
     ) -> CommentEntity:
         ...
-    
+
     @abstractmethod
     def delete_comment(
         self,
@@ -31,6 +31,7 @@ class BaseCommentService(ABC):
 
     @abstractmethod
     def get_by_id(self, comment_id: int) -> CommentEntity: ...
+
 
 class ORMCommentService(BaseCommentService):
     def save_comment(
@@ -45,7 +46,7 @@ class ORMCommentService(BaseCommentService):
             user=user,
         )
         comment_dto.save()
-        
+
         return comment_dto.to_entity()
 
     def delete_comment(
@@ -60,7 +61,7 @@ class ORMCommentService(BaseCommentService):
             user=user,
         )
         comment_dto.delete()
-        
+
         return comment_dto.to_entity()
 
     def get_by_id(self, comment_id: int) -> CommentEntity:
@@ -70,4 +71,3 @@ class ORMCommentService(BaseCommentService):
             raise CommentNotFound(comment_id=comment_id)
 
         return comment_dto.to_entity()
-        

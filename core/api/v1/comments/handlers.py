@@ -1,7 +1,9 @@
 from django.http import HttpRequest
-from ninja import Query, Router
+from ninja import (
+    Query,
+    Router,
+)
 from ninja.errors import HttpError
-from ninja.security import django_auth
 
 from core.api.schemas import ApiResponce
 from core.api.v1.comments.schemas import (
@@ -10,6 +12,7 @@ from core.api.v1.comments.schemas import (
     CommentLikeOutSchema,
     CommentOutSchema,
 )
+from core.api.v1.users.handlers.auth import AuthBearer
 from core.apps.common.exception import ServiceException
 from core.apps.posts.services.comment_likes import BaseCommentLikeService
 from core.apps.posts.use_cases.comments.create import (
@@ -19,10 +22,10 @@ from core.apps.posts.use_cases.comments.create import (
 from core.project.containers import get_container
 
 
-router = Router(tags=['Comments'])
+router = Router(tags=['Comments'], auth=AuthBearer())
 
 
-@router.post('{post_id}/comment', response=ApiResponce[CommentOutSchema], operation_id='createComment', auth=django_auth)
+@router.post('{post_id}/comment', response=ApiResponce[CommentOutSchema], operation_id='createComment')
 def create_comment(
     request: HttpRequest,
     post_id: int,
@@ -46,7 +49,7 @@ def create_comment(
     )
 
 
-@router.delete('{post_id}/comment/{comment_id}/delete', response=ApiResponce[CommentOutSchema], operation_id='deleteComment', auth=django_auth)
+@router.delete('{post_id}/comment/{comment_id}/delete', response=ApiResponce[CommentOutSchema], operation_id='deleteComment')
 def delete_comment(
     request: HttpRequest,
     post_id: int,
@@ -74,40 +77,41 @@ def delete_comment(
 def get_comment_like_service() -> BaseCommentLikeService:
     container = get_container()
     return container.resolve(BaseCommentLikeService)
-    
-@router.post('{post_id}/comment/{comment_id}/like', response=ApiResponce[CommentLikeOutSchema], operation_id='likeComment', auth=django_auth)
+
+
+@router.post('{post_id}/comment/{comment_id}/like', response=ApiResponce[CommentLikeOutSchema], operation_id='likeComment')
 def like_comment_handler(request: HttpRequest, schema: Query[CommentLikeInSchema]) -> ApiResponce[CommentLikeOutSchema]:
-    """Like post"""
+    """Like post."""
     service = get_comment_like_service()
     try:
         service.add_like_to_comment(comment_id=schema.comment_id, user_id=schema.user_id)
         return ApiResponce(
             data=CommentLikeOutSchema(
                 message=f'User {schema.user_id} liked comment {schema.comment_id}',
-            )
+            ),
         )
     except ServiceException as e:
         raise HttpError(status_code=400, message=e.message)
 
 
-@router.delete('{post_id}/comment/{comment_id}/unlike', response=ApiResponce[CommentLikeOutSchema], operation_id='unlikeComment', auth=django_auth)
+@router.delete('{post_id}/comment/{comment_id}/unlike', response=ApiResponce[CommentLikeOutSchema], operation_id='unlikeComment')
 def unlike_comment_handler(request: HttpRequest, schema: Query[CommentLikeInSchema]) -> ApiResponce[CommentLikeOutSchema]:
-    """Removing like"""
+    """Removing like."""
     service = get_comment_like_service()
     try:
         service.delete_like_from_comment(comment_id=schema.comment_id, user_id=schema.user_id)
         return ApiResponce(
             data=CommentLikeOutSchema(
                 message=f'User {schema.user_id} unliked comment {schema.comment_id}',
-            )
+            ),
         )
     except ServiceException as e:
         raise HttpError(status_code=400, message=e.message)
 
 
-@router.get('{post_id}/comment/{comment_id}/likes/count', response=ApiResponce[int], operation_id='getCommentLikesCount', auth=django_auth)
+@router.get('{post_id}/comment/{comment_id}/likes/count', response=ApiResponce[int], operation_id='getCommentLikesCount')
 def get_comment_likes_count(request: HttpRequest, comment_id: int) -> ApiResponce[int]:
-    """Get the number of likes for fasting"""
+    """Get the number of likes for fasting."""
     service = get_comment_like_service()
     try:
         count = service.get_likes_count(comment_id=comment_id)

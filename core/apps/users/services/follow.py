@@ -1,43 +1,53 @@
-from abc import ABC, abstractmethod
-from typing import List, Optional, Tuple
+from abc import (
+    ABC,
+    abstractmethod,
+)
+from typing import (
+    List,
+    Optional,
+    Tuple,
+)
 
-from core.apps.users.entities import Following as FollowingEntity, User as UserEntity
-from core.apps.users.exceptions.following import FollowingExistsException, FollowingException, FollowingNotExistException
-from core.apps.users.exceptions.user import UserNotExist
-from core.apps.users.models import Following as FollowingModel, User as UserModel
 from django.core.cache import cache
 from django.core.paginator import Paginator
+
+from core.apps.users.entities import Following as FollowingEntity
+from core.apps.users.models import (
+    Following as FollowingModel,
+    User as UserModel,
+)
+
 
 class BaseFollowUserService(ABC):
     @abstractmethod
     def create_following(
         self,
         follower_id: int,
-        following_id: int
+        following_id: int,
     ) -> Optional[FollowingEntity]:
         pass
-    
+
     @abstractmethod
     def delete_following(
         self,
         follower_id: int,
-        following_id: int
+        following_id: int,
     ) -> bool:
         pass
-    
+
     @abstractmethod
     def get_user_followers(
         self,
         user_id: int,
-        page: int
+        page: int,
     ) -> Tuple[List[FollowingEntity], int]:
         pass
-    
+
     @abstractmethod
     def get_user_following(
         self,
         user_id: int,
-        page: int
+        page: int,
     ) -> Tuple[List[FollowingEntity], int]:
         pass
 
@@ -45,14 +55,14 @@ class BaseFollowUserService(ABC):
 class ORMFollowUserService(BaseFollowUserService):
     CACHE_TTL = 3600  # 1 hour
     FOLLOWERS_PER_PAGE = 50
-    
+
     def _get_cache_key(self, user_id: int, list_type: str) -> str:
         return f"user:{user_id}:{list_type}"
-    
+
     def create_following(
-        self, 
+        self,
         follower_id: int,
-        following_id: int
+        following_id: int,
     ) -> Optional[FollowingEntity]:
         if follower_id == following_id:
             raise ValueError("Users cannot follow themselves")
@@ -64,13 +74,13 @@ class ORMFollowUserService(BaseFollowUserService):
 
             following = FollowingModel.objects.create(
                 follower_id=follower_id,
-                following_id=following_id
+                following_id=following_id,
             )
 
             # Invalidate cache
             cache_keys = [
                 self._get_cache_key(follower_id, "following"),
-                self._get_cache_key(following_id, "followers")
+                self._get_cache_key(following_id, "followers"),
             ]
             cache.delete_many(cache_keys)
 
@@ -80,21 +90,21 @@ class ORMFollowUserService(BaseFollowUserService):
             return None
 
     def delete_following(
-        self, 
+        self,
         follower_id: int,
-        following_id: int
+        following_id: int,
     ) -> bool:
         try:
-            deleted =  FollowingModel.objects.filter(
+            deleted = FollowingModel.objects.filter(
                 follower_id=follower_id,
-                following_id=following_id
+                following_id=following_id,
             ).delete()
 
             if deleted[0] > 0:
                 # Invalidate cache
                 cache_keys = [
                     self._get_cache_key(follower_id, "following"),
-                    self._get_cache_key(following_id, "followers")
+                    self._get_cache_key(following_id, "followers"),
                 ]
                 cache.delete_many(cache_keys)
                 return True
@@ -107,7 +117,7 @@ class ORMFollowUserService(BaseFollowUserService):
     def get_user_followers(
         self,
         user_id: int,
-        page: int = 1
+        page: int = 1,
     ) -> Tuple[List[FollowingEntity], int]:
         cache_key = self._get_cache_key(user_id, f"followers:page:{page}")
         cached_data = cache.get(cache_key)
@@ -131,7 +141,7 @@ class ORMFollowUserService(BaseFollowUserService):
     def get_user_following(
         self,
         user_id: int,
-        page: int = 1
+        page: int = 1,
     ) -> Tuple[List[FollowingEntity], int]:
         cache_key = self._get_cache_key(user_id, f"following:page:{page}")
         cached_data = cache.get(cache_key)
