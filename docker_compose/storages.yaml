@@ -10,6 +10,13 @@ services:
       - postgres_data:/var/lib/postgresql/data
     env_file:
      - ../.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   redis:
     image: redis/redis-stack:latest
     container_name: redis-stack
@@ -20,6 +27,42 @@ services:
       - redis-data:/data
     env_file:
      - ../.env
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  celery_worker:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: celery_worker
+    command: celery --skip-checks -A core.project worker -P gevent -l info
+    volumes:
+      - ..:/app/
+    env_file:
+      - ../.env
+    depends_on:
+      redis:
+        condition: service_healthy
+    tty: true
+
+  # celery_beat:
+  #   build:
+  #     context: ..
+  #     dockerfile: Dockerfile
+  #   container_name: celery_beat
+  #   command: celery -A config beat --loglevel=info
+  #   volumes:
+  #     - ..:/app/
+  #   env_file:
+  #     - ../.env
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+  #     postgres:
+  #       condition: service_healthy
 
 volumes:
   postgres_data:

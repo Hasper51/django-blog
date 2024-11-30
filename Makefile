@@ -4,7 +4,7 @@ EXEC = docker exec -it
 DB_CONTAINER = example-db
 LOGS = docker logs
 ENV = --env-file .env
-APP_FILE = docker_compose/app.yamlstorages
+APP_FILE = docker_compose/app.yaml
 APP_CONTAINER = main-app
 MANAGE_PY = python manage.py
 
@@ -26,8 +26,7 @@ storages-logs:
 
 .PHONY: app
 app:
-	${DC} -f ${APP_FILE} ${env} -f ${STORAGES_FILE} ${ENV} up --build -d
-
+	${DC} -f ${APP_FILE} ${ENV} -f ${STORAGES_FILE} ${ENV} up --build -d
 
 .PHONY: app-logs
 app-logs:

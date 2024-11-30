@@ -10,7 +10,8 @@ RUN apt update -y && \
     gcc \
     musl-dev \
     libpq-dev \
-    nmap
+    nmap \
+    postgresql-client
 
 ADD pyproject.toml /app
 
@@ -24,3 +25,4 @@ COPY . /app/
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
+
