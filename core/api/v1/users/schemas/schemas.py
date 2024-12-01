@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 
 class UserSchema(BaseModel):
-    id: str
+    id: str # noqa
     username: str
 
 
@@ -16,7 +16,7 @@ class FollowCreateSchema(Schema):
 
 
 class FollowOutSchema(Schema):
-    id: int
+    id: int # noqa
     follower_id: int
     following_id: int
     created_at: datetime

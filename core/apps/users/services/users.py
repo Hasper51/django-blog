@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 
 from core.apps.users.entities import User
-from core.apps.users.exceptions.user import UserTokenInvalid
+from core.apps.users.exceptions.user import UserNotExist
 from core.apps.users.models import User as UserModel
 
 
@@ -26,7 +26,7 @@ class BaseUserService(ABC):
         ...
 
     @abstractmethod
-    def get_by_token(self, token: str) -> User:
+    def get_by_id(self, user_id: int) -> User:
         ...
 
     @abstractmethod
@@ -55,11 +55,11 @@ class ORMUserService(BaseUserService):
         UserModel.objects.filter(email=user.email).update(token=new_token)
         return new_token
 
-    def get_by_token(self, token: str) -> User:
+    def get_by_id(self, user_id: int) -> User:
         try:
-            user_dto = UserModel.objects.get(token=token)
+            user_dto = UserModel.objects.get(id=user_id)
         except UserModel.DoesNotExist:
-            raise UserTokenInvalid(token=token)
+            raise UserNotExist()
 
         return user_dto.to_entity()
 

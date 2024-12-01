@@ -1,4 +1,5 @@
 # core\api\v1\posts\handlers.py
+from django.contrib.auth import get_user_model
 from django.http import HttpRequest
 from ninja import Router
 from ninja.errors import HttpError
@@ -20,7 +21,7 @@ from core.apps.common.exception import ServiceException
 from core.apps.users.services.auth import BaseAuthService
 from core.project.containers import get_container
 
-from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 router = Router(tags=['Users'])
@@ -28,7 +29,7 @@ router = Router(tags=['Users'])
 
 @router.get("/users/me", response=ApiResponce[UserOut], auth=AuthBearer())
 def get_current_user(request):
-    """Получение информации о текущем пользователе"""
+    """Получение информации о текущем пользователе."""
     user = User.objects.get(id=request.user_id)
     return ApiResponce(
         data=UserOut(
@@ -37,9 +38,10 @@ def get_current_user(request):
             email=user.email,
             first_name=user.first_name,
             last_name=user.last_name,
-            created_at=user.date_joined
+            created_at=user.date_joined,
         ),
     )
+
 
 @router.post('auth/login', response=ApiResponce[TokenSchema], operation_id='login')
 def login_handler(request: HttpRequest, schema: AuthInSchema) -> ApiResponce[TokenSchema]:
@@ -82,6 +84,7 @@ def get_token_handler(request: HttpRequest, schema: TokenInSchema) -> ApiResponc
         ),
     )
 
+
 @router.post('auth/register', response=ApiResponce[AuthOutSchema], operation_id='register')
 def register_handler(request: HttpRequest, schema: UserCreate) -> ApiResponce[AuthOutSchema]:
     container = get_container()
@@ -101,7 +104,7 @@ def refresh_token_handler(request: HttpRequest, refresh_token: str) -> ApiRespon
     service: BaseAuthService = container.resolve(BaseAuthService)
 
     new_tokens = service.refresh_tokens(refresh_token=refresh_token)
-    
+
     if not new_tokens:
         raise HttpError(
             status_code=400,

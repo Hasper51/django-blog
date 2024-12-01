@@ -15,10 +15,10 @@ class CreateCommentUseCase:
     def execute(
         self,
         post_id: int,
-        user_token: str,
+        user_id: int,
         comment: CommentEntity,
     ) -> CommentEntity:
-        user = self.user_service.get_by_token(token=user_token)
+        user = self.user_service.get_by_id(id=user_id)
         post = self.post_service.get_by_id(post_id=post_id)
         saved_comment = self.comment_service.save_comment(post=post, user=user, comment=comment)
 
@@ -28,8 +28,8 @@ class CreateCommentUseCase:
 @dataclass
 class DeleteCommentUseCase(CreateCommentUseCase):
 
-    def execute(self, comment_id: int, post_id: int, user_token: str) -> None:
-        user = self.user_service.get_by_token(token=user_token)
+    def execute(self, comment_id: int, post_id: int, user_id: int) -> None:
+        user = self.user_service.get_by_id(id=user_id)
         post = self.post_service.get_by_id(post_id=post_id)
         comment = self.comment_service.get_by_id(comment_id=comment_id)
         deleted_comment = self.comment_service.delete_comment(comment=comment, post=post, user=user)

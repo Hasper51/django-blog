@@ -90,6 +90,7 @@ class AuthService(BaseAuthService):
         self.user_service.verify_email(email)
         return self.user_service.generate_token(user)
 
+    # JWT authentication
     def create_token(self, user_id: int) -> Tuple[str, str]:
         """Создает пару access и refresh токенов."""
         access_payload = {

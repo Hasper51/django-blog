@@ -1,12 +1,13 @@
 from datetime import datetime
 from typing import Optional
+
 from ninja import Schema
 
 
 class TokenSchema(Schema):
     access_token: str
     refresh_token: str
-    token_type: str= "Bearer"
+    token_type: str = "Bearer"
 
 
 class TokenPayload(Schema):
@@ -30,7 +31,7 @@ class UserCreate(AuthInSchema):
 
 
 class UserOut(Schema):
-    id: int
+    id: int # noqa
     email: str
     username: str
     first_name: Optional[str]
