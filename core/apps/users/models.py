@@ -35,7 +35,12 @@ class User(AbstractUser):
         return self.username
 
     def to_entity(self) -> UserEntity:
-        return UserEntity(id=self.pk, email=self.email, date_joined=self.date_joined)
+        return UserEntity(
+            id=self.pk,
+            email=self.email,
+            username=self.username,
+            date_joined=self.date_joined,
+        )
 
 
 class Following(models.Model):

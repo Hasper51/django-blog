@@ -3,15 +3,24 @@ from abc import (
     abstractmethod,
 )
 from typing import (
+    Iterable,
     List,
     Optional,
     Tuple,
 )
 
 from django.core.cache import cache
-from django.core.paginator import Paginator
+from django.db.models import (
+    Max,
+    Q,
+)
 
-from core.apps.users.entities import Following as FollowingEntity
+from core.api.filters import PaginationIn
+from core.apps.users.entities import (
+    Following as FollowingEntity,
+    User as UserEntity,
+)
+from core.apps.users.filters.users import UserFilters
 from core.apps.users.models import (
     Following as FollowingModel,
     User as UserModel,
@@ -55,6 +64,17 @@ class BaseFollowUserService(ABC):
 class ORMFollowUserService(BaseFollowUserService):
     CACHE_TTL = 3600  # 1 hour
     FOLLOWERS_PER_PAGE = 50
+
+    def _build_user_query(
+        self, 
+        filters: UserFilters,
+    ) -> Q:
+        query = Q()  # может быть фильтр в скобках
+
+        if filters.search is not None:
+            query &= Q(username__icontains=filters.search)
+
+        return query
 
     def _get_cache_key(self, user_id: int, list_type: str) -> str:
         return f"user:{user_id}:{list_type}"
@@ -116,48 +136,78 @@ class ORMFollowUserService(BaseFollowUserService):
 
     def get_user_followers(
         self,
+        filters: UserFilters,
+        pagination: PaginationIn,
         user_id: int,
-        page: int = 1,
-    ) -> Tuple[List[FollowingEntity], int]:
-        cache_key = self._get_cache_key(user_id, f"followers:page:{page}")
-        cached_data = cache.get(cache_key)
-
-        if cached_data:
-            return cached_data
-
-        queryset = FollowingModel.objects.filter(following_id=user_id)
-        paginator = Paginator(queryset, self.FOLLOWERS_PER_PAGE)
-        page_obj = paginator.get_page(page)
-
-        followers = [
-            following.to_entity()
-            for following in page_obj
-        ]
-
-        result = (followers, paginator.count)
-        cache.set(cache_key, result, self.CACHE_TTL)
-        return result
+    ) -> Iterable[UserEntity]:
+        query = self._build_user_query(filters)
+        follower_qs = FollowingModel.objects.filter(following_id=user_id).values_list('follower_id', flat=True)
+        user_qs = UserModel.objects.filter(Q(id__in=follower_qs) & Q(query))\
+            .annotate(last_followed=Max('following__created_at'))\
+            .order_by('-last_followed')[
+                pagination.offset:pagination.offset+pagination.limit
+            ]
+        return [user.to_entity() for user in user_qs]
 
     def get_user_following(
         self,
+        filters: UserFilters,
+        pagination: PaginationIn,
         user_id: int,
-        page: int = 1,
-    ) -> Tuple[List[FollowingEntity], int]:
-        cache_key = self._get_cache_key(user_id, f"following:page:{page}")
-        cached_data = cache.get(cache_key)
+    ) -> Iterable[UserEntity]:
+        query = self._build_user_query(filters)
+        following_qs = FollowingModel.objects.filter(follower_id=user_id).values_list('following_id', flat=True)
+        user_qs = UserModel.objects.filter(Q(id__in=following_qs) & Q(query))\
+            .annotate(last_followed=Max('followers__created_at'))\
+            .order_by('-last_followed')[
+                pagination.offset:pagination.offset+pagination.limit
+            ]
+        return [user.to_entity() for user in user_qs]
 
-        if cached_data:
-            return cached_data
+    # def get_user_followers(
+    #     self,
+    #     user_id: int,
+    #     page: int = 1,
+    # ) -> Tuple[List[FollowingEntity], int]:
+    #     cache_key = self._get_cache_key(user_id, f"followers:page:{page}")
+    #     cached_data = cache.get(cache_key)
 
-        queryset = FollowingModel.objects.filter(follower_id=user_id)
-        paginator = Paginator(queryset, self.FOLLOWERS_PER_PAGE)
-        page_obj = paginator.get_page(page)
+    #     if cached_data:
+    #         return cached_data
 
-        following = [
-            following.to_entity()
-            for following in page_obj
-        ]
+    #     queryset = FollowingModel.objects.filter(following_id=user_id)
+    #     paginator = Paginator(queryset, self.FOLLOWERS_PER_PAGE)
+    #     page_obj = paginator.get_page(page)
 
-        result = (following, paginator.count)
-        cache.set(cache_key, result, self.CACHE_TTL)
-        return result
+    #     followers = [
+    #         following.to_entity()
+    #         for following in page_obj
+    #     ]
+
+    #     result = (followers, paginator.count)
+    #     cache.set(cache_key, result, self.CACHE_TTL)
+    #     return result
+
+    # def get_user_following(
+    #     self,
+    #     user_id: int,
+    #     page: int = 1,
+    # ) -> Tuple[List[FollowingEntity], int]:
+    #     cache_key = self._get_cache_key(user_id, f"following:page:{page}")
+    #     cached_data = cache.get(cache_key)
+
+    #     if cached_data:
+    #         return cached_data
+
+    #     queryset = FollowingModel.objects.filter(follower_id=user_id)
+    #     paginator = Paginator(queryset, self.FOLLOWERS_PER_PAGE)
+    #     page_obj = paginator.get_page(page)
+
+    #     following = [
+    #         following.to_entity()
+    #         for following in page_obj
+    #     ]
+
+    #     result = (following, paginator.count)
+    #     cache.set(cache_key, result, self.CACHE_TTL)
+    #     return result

@@ -1,19 +1,28 @@
 # core\api\v1\posts\handlers.py
 from django.http import HttpRequest
 from ninja import (
-    Path,
+    Query,
     Router,
 )
 
-from core.api.schemas import ApiResponce
+from core.api.filters import (
+    PaginationIn,
+    PaginationOut,
+)
+from core.api.schemas import (
+    ApiResponce,
+    ListPaginatedResponce,
+)
+from core.api.v1.users.filters import UserFilters
 from core.api.v1.users.handlers.auth import AuthBearer
 from core.api.v1.users.schemas.schemas import (
     FollowCreateSchema,
     FollowErrorSchema,
     FollowOutSchema,
     UnfollowOutSchema,
-    UserFollowersOut,
+    UserSchema,
 )
+from core.apps.users.filters.users import UserFilters as UserFiltersEntity
 from core.apps.users.services.follow import BaseFollowUserService
 from core.project.containers import get_container
 
@@ -70,31 +79,51 @@ def create_following(
     )
 
 
-@router.get("{user_id}/followers", response=ApiResponce[UserFollowersOut], operation_id='get_followers')
-def get_followers_handler(request: HttpRequest, user_id: int = Path(...), page: int = 1) -> ApiResponce[FollowOutSchema]:
+@router.get("{user_id}/followers", response=ApiResponce[ListPaginatedResponce[UserSchema]], operation_id='get_followers')
+def get_followers_handler(
+    request: HttpRequest,
+    user_id: int,
+    filters: Query[UserFilters],
+    pagination_in: Query[PaginationIn],
+) -> ApiResponce[ListPaginatedResponce[UserSchema]]:
     container = get_container()
     service = container.resolve(BaseFollowUserService)
-    followers, total = service.get_user_followers(user_id, page)
+    user_list = service.get_user_followers(
+        filters=UserFiltersEntity(search=filters.search),
+        pagination=pagination_in,
+        user_id=user_id,
+    )
+    items = [UserSchema.from_entity(obj) for obj in user_list]
+    pagination_out = PaginationOut(
+        offset=pagination_in.offset,
+        limit=pagination_in.limit,
+        total=0,
+    )
     return ApiResponce(
-        data=UserFollowersOut(
-            total_followers=total,
-            followers=followers,
-        ),
+        data=ListPaginatedResponce(items=items, pagination=pagination_out),
     )
 
 
-@router.get("{user_id}/followings", response=ApiResponce[UserFollowersOut], operation_id='get_followings')
+@router.get("{user_id}/followings", response=ApiResponce[ListPaginatedResponce[UserSchema]], operation_id='get_followings')
 def get_user_followings(
     request: HttpRequest,
-    user_id: int = Path(...),
-    page: int = 1,
-):
+    user_id: int,
+    filters: Query[UserFilters],
+    pagination_in: Query[PaginationIn],
+) -> ApiResponce[ListPaginatedResponce[UserSchema]]:
     container = get_container()
     service = container.resolve(BaseFollowUserService)
-    followings, total = service.get_user_following(user_id, page)
+    user_list = service.get_user_following(
+        filters=UserFiltersEntity(search=filters.search),
+        pagination=pagination_in,
+        user_id=user_id,
+    )
+    items = [UserSchema.from_entity(obj) for obj in user_list]
+    pagination_out = PaginationOut(
+        offset=pagination_in.offset,
+        limit=pagination_in.limit,
+        total=0,
+    )
     return ApiResponce(
-        data=UserFollowersOut(
-            total_followers=total,
-            followers=followings,
-        ),
+        data=ListPaginatedResponce(items=items, pagination=pagination_out),
     )

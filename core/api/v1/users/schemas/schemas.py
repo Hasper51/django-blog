@@ -5,11 +5,41 @@ from ninja import Schema
 
 from pydantic import BaseModel
 
+from core.apps.users.entities import (
+    Following as FollowingEntity,
+    User as UserEntity,
+)
+
+
+class FollowSchema(BaseModel):
+    id: str # noqa
+    follower_id: int
+    following_id: int
+    created_at: datetime
+
+    @staticmethod
+    def from_entity(entity: FollowingEntity) -> 'FollowSchema':
+        return FollowSchema(
+            id=str(entity.id),
+            follower_id=entity.follower_id,
+            following_id=entity.following_id,
+            created_at=entity.created_at,
+        )
 
 class UserSchema(BaseModel):
-    id: str # noqa
+    id: int # noqa
     username: str
+    email: str
+    created_at: datetime
 
+    @staticmethod
+    def from_entity(entity: UserEntity) -> 'UserSchema':
+        return UserSchema(
+            id=entity.id,
+            username=entity.username,
+            email=entity.email,
+            created_at=entity.date_joined,
+        )
 
 class FollowCreateSchema(Schema):
     following_id: int

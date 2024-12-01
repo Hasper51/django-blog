@@ -8,6 +8,7 @@ from datetime import datetime
 @dataclass
 class User:
     id: int | None = field(default=None, kw_only=True) # noqa
+    username: str
     email: str
     date_joined: datetime
 
