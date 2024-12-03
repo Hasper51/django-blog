@@ -93,11 +93,12 @@ def get_followers_handler(
         pagination=pagination_in,
         user_id=user_id,
     )
+    user_count = service.get_user_followers_count(user_id=user_id)
     items = [UserSchema.from_entity(obj) for obj in user_list]
     pagination_out = PaginationOut(
         offset=pagination_in.offset,
         limit=pagination_in.limit,
-        total=0,
+        total=user_count,
     )
     return ApiResponce(
         data=ListPaginatedResponce(items=items, pagination=pagination_out),
@@ -118,11 +119,12 @@ def get_user_followings(
         pagination=pagination_in,
         user_id=user_id,
     )
+    user_count = service.get_user_following_count(user_id=user_id)
     items = [UserSchema.from_entity(obj) for obj in user_list]
     pagination_out = PaginationOut(
         offset=pagination_in.offset,
         limit=pagination_in.limit,
-        total=0,
+        total=user_count,
     )
     return ApiResponce(
         data=ListPaginatedResponce(items=items, pagination=pagination_out),

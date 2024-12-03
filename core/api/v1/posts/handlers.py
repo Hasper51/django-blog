@@ -14,6 +14,7 @@ from core.api.schemas import (
 )
 from core.api.v1.posts.filters import PostFilters
 from core.api.v1.posts.schemas import (
+    CreatePostSchema,
     PostInSchema,
     PostOutSchema,
     PostSchema,
@@ -23,6 +24,7 @@ from core.apps.common.exception import ServiceException
 from core.apps.posts.filters.posts import PostFilters as PostFiltersEntity
 from core.apps.posts.services.post_likes import BasePostLikeService
 from core.apps.posts.services.posts import BasePostService
+from core.apps.posts.use_cases.posts.create import CreatePostUseCase
 from core.project.containers import get_container
 
 
@@ -49,6 +51,26 @@ def get_post_list_handler(
         data=ListPaginatedResponce(items=items, pagination=pagination_out),
     )
 
+@router.post('post', response=ApiResponce[PostSchema], operation_id='createPost')
+def create_comment(
+    request: HttpRequest,
+    schema: CreatePostSchema,
+    user_id: int,
+) -> ApiResponce[PostSchema]:
+    container = get_container()
+    use_case = container.resolve(CreatePostUseCase)
+
+    try:
+        result = use_case.execute(
+            user_id=user_id,
+            post=schema.to_entity(),
+        )
+    except ServiceException as e:
+        raise HttpError(status_code=400, message=e.message)
+
+    return ApiResponce(
+        data=PostSchema.from_entity(result),
+    )
 
 @router.delete('{post_id}/delete', response=ApiResponce[PostOutSchema], operation_id='deletePost')
 def del_post_handler(request: HttpRequest, schema: Query[PostInSchema]) -> ApiResponce[PostOutSchema]:

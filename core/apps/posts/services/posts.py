@@ -13,6 +13,7 @@ from core.apps.posts.entities.posts import Post
 from core.apps.posts.exeptions.posts import PostNotFound
 from core.apps.posts.filters.posts import PostFilters
 from core.apps.posts.models import Post as PostModel
+from core.apps.users.entities import User as UserEntity
 
 
 '''Сервисы принимают entity-объекты и возвращают entity-объекты
@@ -30,6 +31,9 @@ class BasePostService(ABC):
 
     @abstractmethod
     def get_by_id(self, post_id: int) -> int: ...
+
+    @abstractmethod
+    def save_post(self, post: Post, user: UserEntity) -> Post: ...
 
     @abstractmethod
     def delete_post(self, post_id: int, user_id: int) -> None: ...
@@ -64,6 +68,19 @@ class ORMPostService(BasePostService):
             post_dto = PostModel.objects.get(pk=post_id)
         except PostModel.DoesNotExist:
             raise PostNotFound(post_id=post_id)
+
+        return post_dto.to_entity()
+
+    def save_post(
+        self,
+        user: UserEntity,
+        post: Post,
+    ) -> Post:
+        post_dto: Post = PostModel.from_entity(
+            post=post,
+            user=user,
+        )
+        post_dto.save()
 
         return post_dto.to_entity()
 

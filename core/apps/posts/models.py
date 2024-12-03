@@ -36,6 +36,15 @@ class Post(TimeBaseModel):
     def __str__(self):
         return f"Post {self.id} by {self.user} at {self.created_at}"
 
+    @classmethod
+    def from_entity(cls, post: PostEntity, user: UserEntity):
+        return cls(
+            id=post.id,
+            image=post.image,
+            caption=post.caption,
+            user_id=user.id,
+        )
+
     def to_entity(self) -> PostEntity:
         return PostEntity(
             id=self.id,

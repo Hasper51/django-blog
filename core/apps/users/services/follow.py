@@ -53,6 +53,10 @@ class BaseFollowUserService(ABC):
         pass
 
     @abstractmethod
+    def get_user_followers_count(self, user_id: int) -> int:
+        ...
+
+    @abstractmethod
     def get_user_following(
         self,
         user_id: int,
@@ -60,13 +64,17 @@ class BaseFollowUserService(ABC):
     ) -> Tuple[List[FollowingEntity], int]:
         pass
 
+    @abstractmethod
+    def get_user_followings_count(self, user_id: int) -> int:
+        ...
+
 
 class ORMFollowUserService(BaseFollowUserService):
     CACHE_TTL = 3600  # 1 hour
     FOLLOWERS_PER_PAGE = 50
 
     def _build_user_query(
-        self, 
+        self,
         filters: UserFilters,
     ) -> Q:
         query = Q()  # может быть фильтр в скобках
@@ -149,6 +157,10 @@ class ORMFollowUserService(BaseFollowUserService):
             ]
         return [user.to_entity() for user in user_qs]
 
+    def get_user_followers_count(self, user_id: int) -> int:
+        count = FollowingModel.objects.filter(following_id=user_id).count()
+        return count
+
     def get_user_following(
         self,
         filters: UserFilters,
@@ -163,6 +175,10 @@ class ORMFollowUserService(BaseFollowUserService):
                 pagination.offset:pagination.offset+pagination.limit
             ]
         return [user.to_entity() for user in user_qs]
+
+    def get_user_followings_count(self, user_id: int) -> int:
+        count = FollowingModel.objects.filter(follower_id=user_id).count()
+        return count
 
     # def get_user_followers(
     #     self,

@@ -16,7 +16,7 @@ class CommentInSchema(BaseModel):
 
 class CreateCommentSchema(BaseModel):
     post_id: int
-    user_token: str
+    user_id: int
     comment: CommentInSchema
 
 

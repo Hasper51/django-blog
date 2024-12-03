@@ -1,6 +1,8 @@
 # core\api\v1\posts\schemas.py
 from datetime import datetime
 
+from ninja import Schema
+
 from pydantic import BaseModel
 
 from core.apps.posts.entities.posts import Post as PostEntity
@@ -31,8 +33,25 @@ class PostSchema(BaseModel):
             updated_at=entity.updated_at,
         )
 
+    def to_entity(self):
+        return PostEntity(
+            image=self.image,
+            caption=self.caption,
+        )
+
 
 PostListSchema = list[PostSchema]
+
+
+class CreatePostSchema(Schema):
+    image: str
+    caption: str
+    
+    def to_entity(self):
+        return PostEntity(
+            image=self.image,
+            caption=self.caption,
+        )
 
 
 class PostInSchema(BaseModel):
