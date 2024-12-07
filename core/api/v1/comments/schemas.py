@@ -14,12 +14,6 @@ class CommentInSchema(BaseModel):
         )
 
 
-class CreateCommentSchema(BaseModel):
-    post_id: int
-    user_id: int
-    comment: CommentInSchema
-
-
 class CommentOutSchema(CommentInSchema):
     id: int # noqa
     username: str

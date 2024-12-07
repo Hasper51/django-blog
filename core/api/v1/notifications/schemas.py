@@ -1,9 +1,10 @@
 from datetime import datetime
+
 from ninja import Schema
 
 
 class NotificationOutSchema(Schema):
-    id: int
+    id: int # noqa
     recipient_id: int
     actor_id: int
     notification_type: str

@@ -41,7 +41,7 @@ def get_comment_list_handler(
 ) -> ApiResponce[ListPaginatedResponce[CommentOutSchema]]:
     container = get_container()
     service: BaseCommentService = container.resolve(BaseCommentService)
-    comment_list = service.get_comment_list(post_id = post_id, pagination=pagination_in)
+    comment_list = service.get_comment_list(post_id=post_id, pagination=pagination_in)
     comment_count = service.get_comment_count(post_id=post_id)
     items = [CommentOutSchema.from_entity(obj) for obj in comment_list]
     pagination_out = PaginationOut(

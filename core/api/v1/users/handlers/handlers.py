@@ -13,9 +13,7 @@ from core.api.v1.users.schemas.jwt import (
     UserCreate,
     UserOut,
 )
-from core.api.v1.users.schemas.schemas import (
-    TokenInSchema,
-)
+from core.api.v1.users.schemas.schemas import TokenInSchema
 from core.apps.common.exception import ServiceException
 from core.apps.users.services.auth import BaseAuthService
 from core.project.containers import get_container

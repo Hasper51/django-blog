@@ -33,7 +33,7 @@ router = Router(tags=['Follow Users'], auth=AuthBearer())
 @router.delete("unfollow/{following_id}", response=ApiResponce[UnfollowOutSchema], operation_id='delete_follow')
 def delete_following(
     request,
-    schema: Query[FollowInSchema]
+    schema: Query[FollowInSchema],
 ) -> ApiResponce[UnfollowOutSchema]:
     container = get_container()
     service = container.resolve(BaseFollowUserService)

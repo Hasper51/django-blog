@@ -3,8 +3,13 @@ from django.dispatch import receiver
 
 from core.apps.notifications.models import NotificationType
 from core.apps.notifications.tasks import create_notification_task
+from core.apps.posts.models import (
+    Comment,
+    CommentLike,
+    Post,
+    PostLike,
+)
 from core.apps.users.models import Following
-from core.apps.posts.models import Post, Comment, PostLike, CommentLike
 
 
 @receiver(post_save, sender=Following)
@@ -15,7 +20,7 @@ def create_follow_notification(sender, instance, created, **kwargs):
             actor_id=instance.follower.id,
             notification_type=NotificationType.FOLLOW,
             target_id=instance.id,
-            target_type='Following'
+            target_type='Following',
         )
 
 
@@ -28,8 +33,9 @@ def create_post_notification(sender, instance, created, **kwargs):
                 actor_id=instance.user.id,
                 notification_type=NotificationType.POST,
                 target_id=instance.id,
-                target_type='Post'
+                target_type='Post',
             )
+
 
 @receiver(post_save, sender=Comment)
 def create_comment_notification(sender, instance, created, **kwargs):
@@ -39,8 +45,9 @@ def create_comment_notification(sender, instance, created, **kwargs):
             actor_id=instance.user.id,
             notification_type=NotificationType.COMMENT,
             target_id=instance.id,
-            target_type='Comment'
+            target_type='Comment',
         )
+
 
 @receiver(post_save, sender=PostLike)
 def create_post_like_notification(sender, instance, created, **kwargs):
@@ -50,8 +57,9 @@ def create_post_like_notification(sender, instance, created, **kwargs):
             actor_id=instance.user.id,
             notification_type=NotificationType.POST_LIKE,
             target_id=instance.id,
-            target_type='PostLike'
+            target_type='PostLike',
         )
+
 
 @receiver(post_save, sender=CommentLike)
 def create_comment_like_notification(sender, instance, created, **kwargs):
@@ -61,5 +69,5 @@ def create_comment_like_notification(sender, instance, created, **kwargs):
             actor_id=instance.user.id,
             notification_type=NotificationType.COMMENT_LIKE,
             target_id=instance.id,
-            target_type='CommentLike'
+            target_type='CommentLike',
         )

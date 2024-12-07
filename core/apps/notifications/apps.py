@@ -10,4 +10,3 @@ class NotificationsConfig(AppConfig):
             import core.apps.notifications.signals  # Важно импортировать сигналы
         except ImportError:
             pass
-    

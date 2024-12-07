@@ -51,6 +51,7 @@ def get_post_list_handler(
         data=ListPaginatedResponce(items=items, pagination=pagination_out),
     )
 
+
 @router.post('post', response=ApiResponce[PostSchema], operation_id='createPost')
 def create_comment(
     request: HttpRequest,
@@ -70,6 +71,7 @@ def create_comment(
     return ApiResponce(
         data=PostSchema.from_entity(result),
     )
+
 
 @router.delete('{post_id}/delete', response=ApiResponce[PostOutSchema], operation_id='deletePost')
 def del_post_handler(request: HttpRequest, schema: Query[PostInSchema]) -> ApiResponce[PostOutSchema]:

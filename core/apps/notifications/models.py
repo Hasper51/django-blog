@@ -1,7 +1,5 @@
 from django.db import models
 
-
-
 from core.apps.notifications.entities import Notification as NotificationEntity
 from core.apps.users.models import User
 
@@ -13,6 +11,7 @@ class NotificationType(models.TextChoices):
     COMMENT = 'COMMENT', 'New Comment'
     POST_LIKE = 'POST_LIKE', 'New Like'
     COMMENT_LIKE = 'COMMENT_LIKE', 'New Like'
+
 
 class Notification(models.Model):
     """Represents system notifications for user activities.

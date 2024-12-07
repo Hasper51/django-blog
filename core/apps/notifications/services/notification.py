@@ -1,5 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import (
+    ABC,
+    abstractmethod,
+)
 from typing import List
+
 from django.db import transaction
 
 from core.apps.notifications.entities import Notification as NotificationEntity
@@ -30,7 +34,7 @@ class ORMNotificationService(BaseNotificationService):
             target_id=notification.target_id,
             target_type=notification.target_type,
             is_read=notification.is_read,
-            created_at=notification.created_at
+            created_at=notification.created_at,
         )
 
     def create_notification(self, notification: NotificationEntity) -> NotificationEntity:
@@ -40,7 +44,7 @@ class ORMNotificationService(BaseNotificationService):
             notification_type=notification.notification_type,
             target_id=notification.target_id,
             target_type=notification.target_type,
-            is_read=notification.is_read
+            is_read=notification.is_read,
         )
         return self._to_entity(db_notification)
 

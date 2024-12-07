@@ -83,6 +83,6 @@ def _initialize_container() -> punq.Container:
     container.register(CreateCommentUseCase)
     container.register(DeleteCommentUseCase)
     container.register(BaseCommentLikeService, ORMCommentLikeService)
-    
+
     container.register(BaseNotificationService, ORMNotificationService)
     return container

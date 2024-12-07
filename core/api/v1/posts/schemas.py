@@ -46,7 +46,7 @@ PostListSchema = list[PostSchema]
 class CreatePostSchema(Schema):
     image: str
     caption: str
-    
+
     def to_entity(self):
         return PostEntity(
             image=self.image,

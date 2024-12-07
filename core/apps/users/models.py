@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -20,12 +18,6 @@ class User(AbstractUser):
     email_verified = models.BooleanField(default=False)
     bio = models.TextField(blank=True, verbose_name="Bio")
     profile_image = models.ImageField(upload_to="user_images/", blank=True, null=True)
-    token = models.CharField(
-        max_length=255,
-        unique=True,
-        verbose_name='User Token',
-        default=uuid4,
-    )
 
     class Meta:
         verbose_name = 'User'
