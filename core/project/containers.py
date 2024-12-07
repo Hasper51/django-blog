@@ -2,6 +2,10 @@ from functools import lru_cache
 
 import punq
 
+from core.apps.notifications.services.notification import (
+    BaseNotificationService,
+    ORMNotificationService,
+)
 from core.apps.posts.services.comment_likes import (
     BaseCommentLikeService,
     ORMCommentLikeService,
@@ -79,4 +83,6 @@ def _initialize_container() -> punq.Container:
     container.register(CreateCommentUseCase)
     container.register(DeleteCommentUseCase)
     container.register(BaseCommentLikeService, ORMCommentLikeService)
+    
+    container.register(BaseNotificationService, ORMNotificationService)
     return container
