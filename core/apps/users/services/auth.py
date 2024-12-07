@@ -88,7 +88,6 @@ class AuthService(BaseAuthService):
         user = self.user_service.get(email)
         self.codes_service.validate_code(code, user)
         self.user_service.verify_email(email)
-        return self.user_service.generate_token(user)
 
     # JWT authentication
     def create_token(self, user_id: int) -> Tuple[str, str]:

@@ -16,8 +16,8 @@ from core.api.schemas import (
 from core.api.v1.users.filters import UserFilters
 from core.api.v1.users.handlers.auth import AuthBearer
 from core.api.v1.users.schemas.schemas import (
-    FollowCreateSchema,
     FollowErrorSchema,
+    FollowInSchema,
     FollowOutSchema,
     UnfollowOutSchema,
     UserSchema,
@@ -31,22 +31,25 @@ router = Router(tags=['Follow Users'], auth=AuthBearer())
 
 
 @router.delete("unfollow/{following_id}", response=ApiResponce[UnfollowOutSchema], operation_id='delete_follow')
-def delete_following(request, following_id: int) -> ApiResponce[UnfollowOutSchema]:
+def delete_following(
+    request,
+    schema: Query[FollowInSchema]
+) -> ApiResponce[UnfollowOutSchema]:
     container = get_container()
     service = container.resolve(BaseFollowUserService)
     success = service.delete_following(
         follower_id=request.user.id,
-        following_id=following_id,
+        following_id=schema.following_id,
     )
     if not success:
         return ApiResponce(
             errors=FollowErrorSchema(
-                message=f'Failed to unfollow from {following_id}',
+                message=f'Failed to unfollow from {schema.following_id}',
             ),
         )
     return ApiResponce(
         data=UnfollowOutSchema(
-            message=f'You are unfollow from {following_id} successfully',
+            message=f'You are unfollow from {schema.following_id} successfully',
         ),
     )
 
@@ -54,13 +57,13 @@ def delete_following(request, following_id: int) -> ApiResponce[UnfollowOutSchem
 @router.post("/follow", response=ApiResponce[FollowOutSchema], operation_id='create_follow')
 def create_following(
     request,
-    payload: FollowCreateSchema,
+    schema: Query[FollowInSchema],
 ) -> ApiResponce[FollowOutSchema]:
     container = get_container()
     service = container.resolve(BaseFollowUserService)
     following = service.create_following(
         follower_id=request.user.id,
-        following_id=payload.following_id,
+        following_id=schema.following_id,
     )
     if not following:
         return ApiResponce(

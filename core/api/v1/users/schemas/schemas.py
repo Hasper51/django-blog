@@ -43,7 +43,7 @@ class UserSchema(BaseModel):
         )
 
 
-class FollowCreateSchema(Schema):
+class FollowInSchema(Schema):
     following_id: int
 
 

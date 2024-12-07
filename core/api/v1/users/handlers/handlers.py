@@ -15,7 +15,6 @@ from core.api.v1.users.schemas.jwt import (
 )
 from core.api.v1.users.schemas.schemas import (
     TokenInSchema,
-    TokenOutSchema,
 )
 from core.apps.common.exception import ServiceException
 from core.apps.users.services.auth import BaseAuthService
@@ -66,12 +65,12 @@ def login_handler(request: HttpRequest, schema: AuthInSchema) -> ApiResponce[Tok
     )
 
 
-@router.post('auth/confirm', response=ApiResponce[TokenOutSchema], operation_id='confirmCode')
-def get_token_handler(request: HttpRequest, schema: TokenInSchema) -> ApiResponce[TokenOutSchema]:
+@router.post('auth/confirm', response=ApiResponce[AuthOutSchema], operation_id='confirmCode')
+def get_token_handler(request: HttpRequest, schema: TokenInSchema) -> ApiResponce[AuthOutSchema]:
     container = get_container()
     service = container.resolve(BaseAuthService)
     try:
-        token = service.confirm(schema.code, schema.email)
+        service.confirm(schema.code, schema.email)
     except ServiceException as exception:
         raise HttpError(
             status_code=400,
@@ -79,8 +78,8 @@ def get_token_handler(request: HttpRequest, schema: TokenInSchema) -> ApiResponc
         )
 
     return ApiResponce(
-        data=TokenOutSchema(
-            token=token,
+        data=AuthOutSchema(
+            message="Email is confirmed",
         ),
     )
 

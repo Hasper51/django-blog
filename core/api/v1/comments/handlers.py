@@ -59,14 +59,13 @@ def create_comment(
     request: HttpRequest,
     post_id: int,
     schema: CommentInSchema,
-    user_id: int,
 ) -> ApiResponce[CommentOutSchema]:
     container = get_container()
     use_case = container.resolve(CreateCommentUseCase)
 
     try:
         result = use_case.execute(
-            user_id=user_id,
+            user_id=request.user.id,
             post_id=post_id,
             comment=schema.to_entity(),
         )
@@ -83,14 +82,13 @@ def delete_comment(
     request: HttpRequest,
     post_id: int,
     comment_id: int,
-    user_id: int,
 ) -> ApiResponce[CommentOutSchema]:
     container = get_container()
     use_case = container.resolve(DeleteCommentUseCase)
 
     try:
         result = use_case.execute(
-            user_id=user_id,
+            user_id=request.user.id,
             post_id=post_id,
             comment_id=comment_id,
         )
@@ -116,10 +114,10 @@ def like_comment_handler(
     """Like post."""
     service = get_comment_like_service()
     try:
-        service.add_like_to_comment(comment_id=schema.comment_id, user_id=schema.user_id)
+        service.add_like_to_comment(comment_id=schema.comment_id, user_id=request.user.id)
         return ApiResponce(
             data=CommentLikeOutSchema(
-                message=f'User {schema.user_id} liked comment {schema.comment_id}',
+                message=f'User {request.user.id} liked comment {schema.comment_id}',
             ),
         )
     except ServiceException as e:
@@ -134,10 +132,10 @@ def unlike_comment_handler(
     """Removing like."""
     service = get_comment_like_service()
     try:
-        service.delete_like_from_comment(comment_id=schema.comment_id, user_id=schema.user_id)
+        service.delete_like_from_comment(comment_id=schema.comment_id, user_id=request.user.id)
         return ApiResponce(
             data=CommentLikeOutSchema(
-                message=f'User {schema.user_id} unliked comment {schema.comment_id}',
+                message=f'User {request.user.id} unliked comment {schema.comment_id}',
             ),
         )
     except ServiceException as e:

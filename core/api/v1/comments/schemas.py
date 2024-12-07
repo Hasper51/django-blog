@@ -42,7 +42,6 @@ CommentListSchema = list[CommentOutSchema]
 
 class CommentLikeInSchema(BaseModel):
     comment_id: int
-    user_id: int
 
 
 class CommentLikeOutSchema(BaseModel):

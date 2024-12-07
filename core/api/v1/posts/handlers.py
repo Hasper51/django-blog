@@ -55,14 +55,13 @@ def get_post_list_handler(
 def create_comment(
     request: HttpRequest,
     schema: CreatePostSchema,
-    user_id: int,
 ) -> ApiResponce[PostSchema]:
     container = get_container()
     use_case = container.resolve(CreatePostUseCase)
 
     try:
         result = use_case.execute(
-            user_id=user_id,
+            user_id=request.user.id,
             post=schema.to_entity(),
         )
     except ServiceException as e:
@@ -76,10 +75,10 @@ def create_comment(
 def del_post_handler(request: HttpRequest, schema: Query[PostInSchema]) -> ApiResponce[PostOutSchema]:
     container = get_container()
     service: BasePostService = container.resolve(BasePostService)
-    service.delete_post(post_id=schema.post_id, user_id=schema.user_id)
+    service.delete_post(post_id=schema.post_id, user_id=request.user.id)
     return ApiResponce(
         data=PostOutSchema(
-            message=f'User {schema.user_id} deleted post {schema.post_id}',
+            message=f'User {request.user.id} deleted post {schema.post_id}',
         ),
     )
 
@@ -95,10 +94,10 @@ def like_post_handler(request: HttpRequest, schema: Query[PostInSchema]) -> ApiR
     """Like post."""
     service = get_post_like_service()
     try:
-        service.add_like_to_post(post_id=schema.post_id, user_id=schema.user_id)
+        service.add_like_to_post(post_id=schema.post_id, user_id=request.user.id)
         return ApiResponce(
             data=PostOutSchema(
-                message=f'User {schema.user_id} liked post {schema.post_id}',
+                message=f'User {request.user.id} liked post {schema.post_id}',
             ),
         )
     except ServiceException as e:
@@ -110,10 +109,10 @@ def unlike_post_handler(request: HttpRequest, schema: Query[PostInSchema]) -> Ap
     """Removing like."""
     service = get_post_like_service()
     try:
-        service.delete_like_from_post(post_id=schema.post_id, user_id=schema.user_id)
+        service.delete_like_from_post(post_id=schema.post_id, user_id=request.user.id)
         return ApiResponce(
             data=PostOutSchema(
-                message=f'User {schema.user_id} unliked post {schema.post_id}',
+                message=f'User {request.user.id} unliked post {schema.post_id}',
             ),
         )
     except ServiceException as e:

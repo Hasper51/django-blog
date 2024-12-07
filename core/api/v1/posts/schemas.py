@@ -56,7 +56,6 @@ class CreatePostSchema(Schema):
 
 class PostInSchema(BaseModel):
     post_id: int
-    user_id: int
 
 
 class PostOutSchema(BaseModel):
