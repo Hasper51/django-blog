@@ -1,12 +1,45 @@
 # Django Blog with Docker Compose, Makefile, and PostgreSQL
 
+**Django Blog** - RestAPI app on django. 
+
 ## Requirements
 
 - [Docker](https://www.docker.com/get-started)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - [GNU Make](https://www.gnu.org/software/make/)
 
-## How to Use
+## 📦 Main Features
+- 🔑 Registration and authorization of users
+- ✍️ Creating, editing and deleting posts
+- 💬 Comment and like system
+- 🖼️ Uploading images to articles
+- 🔍 Search by articles
+- ❤️ Subscription system
+- 🔔 Notification system
+- 📊 Admin panel for content management
+
+## 🛠 Tech Stack
+
+### Backend
+- **Python 3.12**
+- **Django 5.1**
+- **Django Ninja**: for building APIs
+- **PostgreSQL**: database
+- **Celery**: for background task processing (with Redis)
+- **PyJWT**: JSON Web Token-based authentication
+
+### DevOps
+- **Docker**: containerization
+
+### Testing and Automation
+- **Pytest**: for testing
+- **Factory Boy**: for fixture generation
+- **Pre-commit**: automated code checks
+- **isort**: import sorting
+- **autoflake**: unused code removal
+
+
+## 🚀 How to Use
 
 1. **Clone the repository:**
 
@@ -15,7 +48,11 @@
    cd your_repository
 
 2. Install all required packages in `Requirements` section.
-
+3. Rename .env_example to . env and enter your details if necessary.
+4. Run with the commands:
+`make migrations`,
+`make migrate`,
+`make app`
 
 ### Implemented Commands
 
