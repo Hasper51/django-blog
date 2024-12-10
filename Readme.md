@@ -1,6 +1,6 @@
 # Django Blog with Docker Compose, Makefile, and PostgreSQL
 
-**Django Blog** - RestAPI app on django. 
+**Django Blog** - Django REST API application based on onion architecture.
 
 ## Requirements
 
